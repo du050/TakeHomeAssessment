@@ -8,7 +8,11 @@
         @select-user="selectUser"
         @open-modal="openModal"
       />
-
+      <UserDetail 
+        :selected-user="selectedUser"
+        @update-user="updateUser"
+      />
+    
       <!-- Simple user detail viewer for testing -->
       <div class="flex-1 p-6">
         <h2 class="text-2xl font-bold mb-4">Selected User</h2>
@@ -39,6 +43,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import UserList from './assets/components/UserList.vue'
+import UserDetail from './assets/components/UserDetail.vue'
 
 // Simple local state for testing 
 const users = ref([])
@@ -64,8 +69,30 @@ const selectUser = (user) => {
   console.log('Selected User:', user)
 }
 
+const updateUser = (userData) => {
+ const index = users.value.findIndex(u => u.id === selectedUser.value.id)
+  if (index !== -1) {
+    users.value[index] = { ...users.value[index], ...userData }
+    selectedUser.value = users.value[index]
+  }
+}
+
+const createUser = (userData) => {
+  const newUser = {
+    ...userData,
+    id: Date.now(),
+    avatar: 'https://ui-avatars.com/api/?name=' + userData.firstName + '+' + userData.lastName
+  }
+  users.value.push(newUser)
+  console.log('Created User:', newUser)
+  }
+
 const openModal = () => {
   isModalOpen.value = true
   console.log('Modal Opened!')
+}
+
+const closeModal = () => {
+  isModalOpen.value = false
 }
 </script>
