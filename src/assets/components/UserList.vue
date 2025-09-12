@@ -87,12 +87,12 @@ const filteredUsers = computed(() => {
     return filtered;
 });
 
-// Select user and emit the user to the parent component
+// emits the selected user to the parent, so parent can display details or update UI
 const selectUser = (user) => {
     emit('selectUser', user);
 };
 
-// Open modal and emit the modal to the parent component
+// emits to parent to open the "New User" modal
 const openModal = () => {
     emit('openModal');
 };
