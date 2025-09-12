@@ -10,13 +10,18 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "axios": "^1.12.1",
+    "tailwind": "^4.0.0",
     "vue": "^3.5.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
     "@vitejs/plugin-vue": "^5.2.1",
+    "autoprefixer": "^10.4.21",
     "eslint": "^9.14.0",
     "eslint-plugin-vue": "^9.30.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.13",
     "vite": "^6.0.1",
     "vite-plugin-vue-devtools": "^7.6.5"
   }
