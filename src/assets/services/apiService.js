@@ -113,7 +113,11 @@ export const apiService = {
       if (options.plan) params.plan = options.plan
 
       const response = await apiClient.get('/', { params })
-      return response.data.map(transformUser)
+      const total = Number(response.headers['x-total-count'] || response.data.length || 0)
+      return {
+        users: response.data.map(transformUser),
+        total
+      }
     } catch (error) {
       console.error('Failed to fetch users:', error)
       throw error

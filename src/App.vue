@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <div class="flex h-screen">
+    <div class="flex">
       <UserList
         :users="userStore.filteredUsers"
         :selected-user="userStore.selectedUser"

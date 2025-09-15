@@ -1,5 +1,5 @@
 <template>
-  <div class="w-80 bg-white rounded-t-lg shadow-lg">
+  <div class="w-80 bg-white shadow-lg flex flex-col h-full">
     <!-- Filter Header -->
     <div class="bg-blue-600 text-white p-4 rounded-t-lg">
       <div class="flex items-center">
@@ -15,7 +15,7 @@
     </div>
 
     <!-- User List -->
-    <div class="bg-white">
+    <div class="bg-white flex-1 flex flex-col">
       <!-- Inline Filters -->
       <div class="px-4 pt-3 pb-4 border-b border-gray-100 space-y-2">
         <input
@@ -55,125 +55,152 @@
           </button>
         </div>
       </div>
-      <!-- Loading State -->
-      <div v-if="store.loading" class="p-8 text-center">
-        <div class="inline-flex items-center">
-          <svg
-            class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              class="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              stroke-width="4"
-            ></circle>
-            <path
-              class="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <span class="text-gray-600">Loading users...</span>
-        </div>
-      </div>
-
-      <!-- Error State -->
-      <div
-        v-else-if="store.error"
-        class="p-4 mx-4 my-4 rounded border border-red-200 bg-red-50 text-red-700"
-      >
-        <div class="flex items-start justify-between">
-          <div class="flex items-start">
+      <div class="flex-1 overflow-y-auto">
+        <!-- Loading State -->
+        <div v-if="store.loading" class="p-8 text-center">
+          <div class="inline-flex items-center">
             <svg
-              class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
+              class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600"
+              xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              stroke="currentColor"
               viewBox="0 0 24 24"
             >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
               <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
-            <span class="text-sm">{{ store.error }}</span>
+            <span class="text-gray-600">Loading users...</span>
           </div>
-          <div class="flex gap-2">
-            <button
-              @click="retryFetch"
-              class="px-2 py-1 rounded text-xs bg-red-600 text-white hover:bg-red-700"
-            >
-              Retry
-            </button>
-            <button
-              @click="store.clearError()"
-              class="px-2 py-1 rounded text-xs bg-white border border-red-300 text-red-700 hover:bg-red-100"
-            >
-              Dismiss
-            </button>
+        </div>
+
+        <!-- Error State -->
+        <div
+          v-else-if="store.error"
+          class="p-4 mx-4 my-4 rounded border border-red-200 bg-red-50 text-red-700"
+        >
+          <div class="flex items-start justify-between">
+            <div class="flex items-start">
+              <svg
+                class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                />
+              </svg>
+              <span class="text-sm">{{ store.error }}</span>
+            </div>
+            <div class="flex gap-2">
+              <button
+                @click="retryFetch"
+                class="px-2 py-1 rounded text-xs bg-red-600 text-white hover:bg-red-700"
+              >
+                Retry
+              </button>
+              <button
+                @click="store.clearError()"
+                class="px-2 py-1 rounded text-xs bg-white border border-red-300 text-red-700 hover:bg-red-100"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div
+          v-else-if="store.filteredUsers.length === 0"
+          class="p-8 text-center text-gray-500"
+        >
+          <svg
+            class="w-12 h-12 mx-auto mb-4 text-gray-300"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
+            ></path>
+          </svg>
+          <p class="text-lg font-medium mb-2">No users found</p>
+          <p class="text-sm">Try adjusting your filters or create a new user</p>
+        </div>
+
+        <!-- User List -->
+        <div v-else>
+          <div
+            v-for="user in store.filteredUsers"
+            :key="user.id"
+            @click="selectUser(user)"
+            :class="[
+              'p-4 cursor-pointer transition-colors',
+              selectedUser?.id === user.id
+                ? 'bg-blue-50 text-blue-600'
+                : 'hover:bg-gray-50 text-gray-800',
+            ]"
+          >
+            <div class="flex items-center">
+              <img :src="user.avatar" class="w-10 h-10 rounded-full mr-3" />
+              <div class="flex-1">
+                <p class="font-medium">
+                  {{ user.firstName }} {{ user.lastName }}
+                </p>
+                <p class="text-sm text-gray-600">{{ user.email }}</p>
+                <span class="text-xs bg-gray-200 px-2 py-1 rounded">{{
+                  user.plan
+                }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Empty State -->
+      <!-- Pagination Controls -->
       <div
-        v-else-if="store.filteredUsers.length === 0"
-        class="p-8 text-center text-gray-500"
+        class="p-3 border-t border-gray-100 flex items-center justify-between"
       >
-        <svg
-          class="w-12 h-12 mx-auto mb-4 text-gray-300"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-          ></path>
-        </svg>
-        <p class="text-lg font-medium mb-2">No users found</p>
-        <p class="text-sm">Try adjusting your filters or create a new user</p>
-      </div>
-
-      <!-- User List -->
-      <div v-else>
-        <div
-          v-for="user in store.filteredUsers"
-          :key="user.id"
-          @click="selectUser(user)"
-          :class="[
-            'p-4 cursor-pointer transition-colors',
-            selectedUser?.id === user.id
-              ? 'bg-blue-50 text-blue-600'
-              : 'hover:bg-gray-50 text-gray-800',
-          ]"
-        >
-          <div class="flex items-center">
-            <img :src="user.avatar" class="w-10 h-10 rounded-full mr-3" />
-            <div class="flex-1">
-              <p class="font-medium">
-                {{ user.firstName }} {{ user.lastName }}
-              </p>
-              <p class="text-sm text-gray-600">{{ user.email }}</p>
-              <span class="text-xs bg-gray-200 px-2 py-1 rounded">{{
-                user.plan
-              }}</span>
-            </div>
-          </div>
+        <div class="text-xs text-gray-500">
+          Page {{ store.page }} of {{ totalPages }} ({{ store.total }} users)
+        </div>
+        <div class="flex items-center gap-2">
+          <button
+            @click="prevPage"
+            :disabled="store.page <= 1 || store.loading"
+            class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Prev
+          </button>
+          <button
+            @click="nextPage"
+            :disabled="store.page >= totalPages || store.loading"
+            class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Create New User Button -->
-    <div class="bg-gray-100 p-4 rounded-b-lg">
+    <div class="bg-gray-100 p-4">
       <button
         @click="openModal"
         class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
@@ -192,7 +219,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "../../stores/userStore.js";
 
 // Props and Emits
@@ -242,6 +269,24 @@ const retryFetch = async () => {
     await store.fetchUsers();
   } catch (_) {
     // Error already handled/set in store
+  }
+};
+
+// Pagination helpers
+const totalPages = computed(() => {
+  const pages = Math.ceil((store.total || 0) / (store.limit || 1));
+  return pages || 1;
+});
+
+const nextPage = async () => {
+  if (store.page < totalPages.value) {
+    await store.setPage(store.page + 1);
+  }
+};
+
+const prevPage = async () => {
+  if (store.page > 1) {
+    await store.setPage(store.page - 1);
   }
 };
 </script>

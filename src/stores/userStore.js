@@ -14,6 +14,10 @@ export const useUserStore = defineStore('user', () => {
   const filterFirstName = ref("")
   const filterLastName = ref("")
   const filterPlan = ref("")
+  // Pagination
+  const page = ref(1)
+  const limit = ref(8)
+  const total = ref(0)
 
   // Getters - computed properties
   const userCount = computed(() => users.value.length)
@@ -145,17 +149,18 @@ export const useUserStore = defineStore('user', () => {
       setLoading(true)
       clearError()
       clearSuccess()
-      const userList = await apiService.getUsers({
-        page: options.page,
-        limit: options.limit,
+      const { users: apiUsers, total: apiTotal } = await apiService.getUsers({
+        page: options.page ?? page.value,
+        limit: options.limit ?? limit.value,
         q: options.q,
-        firstName: options.firstName ?? filterFirstName.value || undefined,
-        lastName: options.lastName ?? filterLastName.value || undefined,
-        plan: options.plan ?? filterPlan.value || undefined,
+        firstName: (options.firstName ?? filterFirstName.value) || undefined,
+        lastName: (options.lastName ?? filterLastName.value) || undefined,
+        plan: (options.plan ?? filterPlan.value) || undefined,
       })
-      console.log('Fetched users from API:', userList)
-      setUsers(userList)
-      return userList
+      console.log('Fetched users from API:', apiUsers)
+      setUsers(apiUsers)
+      total.value = apiTotal
+      return apiUsers
     } catch (error) {
       console.error('API Error:', error)
       setError(error.message)
@@ -163,6 +168,17 @@ export const useUserStore = defineStore('user', () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const setPage = async (newPage) => {
+    page.value = newPage
+    await fetchUsers()
+  }
+
+  const setLimit = async (newLimit) => {
+    limit.value = newLimit
+    page.value = 1
+    await fetchUsers()
   }
 
   const createUserAPI = async (userData) => {
@@ -259,6 +275,9 @@ export const useUserStore = defineStore('user', () => {
     isModalOpen,
     loading,
     error,
+    page,
+    limit,
+    total,
     successMessage,
     filterFirstName,
     filterLastName,
@@ -278,6 +297,8 @@ export const useUserStore = defineStore('user', () => {
     clearError,
     setSuccess,
     clearSuccess,
+    setPage,
+    setLimit,
     setFirstNameFilter,
     setLastNameFilter,
     setPlanFilter,
