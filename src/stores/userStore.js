@@ -9,6 +9,7 @@ export const useUserStore = defineStore('user', () => {
   const isModalOpen = ref(false)
   const loading = ref(false)
   const error = ref(null)
+  const successMessage = ref(null)
   // Filters
   const filterFirstName = ref("")
   const filterLastName = ref("")
@@ -66,6 +67,14 @@ export const useUserStore = defineStore('user', () => {
 
   const clearError = () => {
     error.value = null
+  }
+
+  const setSuccess = (message) => {
+    successMessage.value = message || null
+  }
+
+  const clearSuccess = () => {
+    successMessage.value = null
   }
 
   // Filter setters
@@ -150,8 +159,10 @@ export const useUserStore = defineStore('user', () => {
     try {
       setLoading(true)
       clearError()
+      clearSuccess()
       const newUser = await apiService.createUser(userData)
       users.value.push(newUser)
+      setSuccess('User created successfully')
       return newUser
     } catch (error) {
       setError(error.message)
@@ -165,6 +176,7 @@ export const useUserStore = defineStore('user', () => {
     try {
       setLoading(true)
       clearError()
+      clearSuccess()
       const updatedUser = await apiService.updateUser(userId, userData)
       
       // Update local state
@@ -178,6 +190,7 @@ export const useUserStore = defineStore('user', () => {
         selectedUser.value = updatedUser
       }
       
+      setSuccess('User updated successfully')
       return updatedUser
     } catch (error) {
       setError(error.message)
@@ -191,6 +204,7 @@ export const useUserStore = defineStore('user', () => {
     try {
       setLoading(true)
       clearError()
+      clearSuccess()
       await apiService.deleteUser(userId)
       
       // Update local state
@@ -204,6 +218,7 @@ export const useUserStore = defineStore('user', () => {
         selectedUser.value = null
       }
       
+      setSuccess('User deleted successfully')
       return true
     } catch (error) {
       setError(error.message)
@@ -234,6 +249,7 @@ export const useUserStore = defineStore('user', () => {
     isModalOpen,
     loading,
     error,
+    successMessage,
     filterFirstName,
     filterLastName,
     filterPlan,
@@ -250,6 +266,8 @@ export const useUserStore = defineStore('user', () => {
     setLoading,
     setError,
     clearError,
+    setSuccess,
+    clearSuccess,
     setFirstNameFilter,
     setLastNameFilter,
     setPlanFilter,

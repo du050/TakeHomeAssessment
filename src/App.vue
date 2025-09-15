@@ -1,5 +1,47 @@
 <template>
   <div class="min-h-screen bg-gray-800">
+    <!-- Global Success Banner -->
+    <div v-if="userStore.successMessage" class="bg-green-600 text-white">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-start justify-between">
+        <div class="flex items-start">
+          <svg
+            class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <p class="text-sm">
+            {{ userStore.successMessage }}
+          </p>
+        </div>
+        <button
+          @click="userStore.clearSuccess()"
+          class="ml-4 text-white/90 hover:text-white"
+          aria-label="Dismiss success"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
     <!-- Global Error Banner -->
     <div v-if="userStore.error" class="bg-red-600 text-white">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-start justify-between">
