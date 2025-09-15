@@ -66,9 +66,15 @@ const mockUsers = [
   },
 ];
 
-// Mount mock users for testing
-onMounted(() => {
-  userStore.setUsers(mockUsers);
+// Load users from API on mount
+onMounted(async () => {
+  try {
+    await userStore.fetchUsers();
+  } catch (error) {
+    console.error("Failed to load users:", error);
+    // Fallback to mock data if API fails
+    userStore.setUsers(mockUsers);
+  }
 });
 
 // Handlers - now using store methods
@@ -77,22 +83,33 @@ const selectUser = (user) => {
   console.log("Selected User:", user);
 };
 
-const updateUser = (userData) => {
-  const updatedUser = userStore.updateUser(selectedUser.value.id, userData);
-  if (updatedUser) {
+const updateUser = async (userData) => {
+  try {
+    const updatedUser = await userStore.updateUserAPI(
+      selectedUser.value.id,
+      userData
+    );
     console.log("Updated User:", updatedUser);
+  } catch (error) {
+    console.error("Failed to update user:", error);
   }
 };
 
-const createUser = (userData) => {
-  const newUser = userStore.addUser(userData);
-  console.log("Created User:", newUser);
+const createUser = async (userData) => {
+  try {
+    const newUser = await userStore.createUserAPI(userData);
+    console.log("Created User:", newUser);
+  } catch (error) {
+    console.error("Failed to create user:", error);
+  }
 };
 
-const deleteUser = (userId) => {
-  const deletedUser = userStore.deleteUser(userId);
-  if (deletedUser) {
-    console.log("Deleted User:", deletedUser);
+const deleteUser = async (userId) => {
+  try {
+    await userStore.deleteUserAPI(userId);
+    console.log("Deleted User:", userId);
+  } catch (error) {
+    console.error("Failed to delete user:", error);
   }
 };
 

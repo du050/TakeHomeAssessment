@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { apiService } from '../services/apiService.js'
 
 export const useUserStore = defineStore('user', () => {
   // State - reactive data
@@ -129,6 +130,103 @@ export const useUserStore = defineStore('user', () => {
     return users.value.find(u => u.id === userId)
   }
 
+  // API Integration Methods
+  const fetchUsers = async () => {
+    try {
+      setLoading(true)
+      clearError()
+      const userList = await apiService.getUsers()
+      setUsers(userList)
+      return userList
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const createUserAPI = async (userData) => {
+    try {
+      setLoading(true)
+      clearError()
+      const newUser = await apiService.createUser(userData)
+      users.value.push(newUser)
+      return newUser
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const updateUserAPI = async (userId, userData) => {
+    try {
+      setLoading(true)
+      clearError()
+      const updatedUser = await apiService.updateUser(userId, userData)
+      
+      // Update local state
+      const userIndex = users.value.findIndex(u => u.id === userId)
+      if (userIndex !== -1) {
+        users.value[userIndex] = updatedUser
+      }
+      
+      // Update selected user if it's the same user
+      if (selectedUser.value?.id === userId) {
+        selectedUser.value = updatedUser
+      }
+      
+      return updatedUser
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const deleteUserAPI = async (userId) => {
+    try {
+      setLoading(true)
+      clearError()
+      await apiService.deleteUser(userId)
+      
+      // Update local state
+      const userIndex = users.value.findIndex(u => u.id === userId)
+      if (userIndex !== -1) {
+        users.value.splice(userIndex, 1)
+      }
+      
+      // Clear selection if the deleted user was selected
+      if (selectedUser.value?.id === userId) {
+        selectedUser.value = null
+      }
+      
+      return true
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const searchUsersAPI = async (query) => {
+    try {
+      setLoading(true)
+      clearError()
+      const searchResults = await apiService.searchUsers(query)
+      return searchResults
+    } catch (error) {
+      setError(error.message)
+      throw error
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return {
     // State
     users,
@@ -160,6 +258,12 @@ export const useUserStore = defineStore('user', () => {
     addUser,
     updateUser,
     deleteUser,
-    getUserById
+    getUserById,
+    // API Integration
+    fetchUsers,
+    createUserAPI,
+    updateUserAPI,
+    deleteUserAPI,
+    searchUsersAPI
   }
 })
