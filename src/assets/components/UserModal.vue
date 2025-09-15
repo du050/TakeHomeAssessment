@@ -94,17 +94,13 @@
             <label class="w-32 text-sm font-medium text-gray-700"
               >* Company :</label
             >
-            <select
+            <input
               v-model="form.company"
               required
+              type="text"
+              placeholder="e.g., Apple, Microsoft"
               class="flex-1 p-2 border border-gray-300 rounded bg-white"
-            >
-              <option value="">Select Company</option>
-              <option value="Apple">Apple</option>
-              <option value="Microsoft">Microsoft</option>
-              <option value="Google">Google</option>
-              <option value="Axiom">Axiom</option>
-            </select>
+            />
           </div>
 
           <div
