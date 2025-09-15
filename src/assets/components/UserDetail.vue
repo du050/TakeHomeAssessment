@@ -180,6 +180,79 @@
         </div>
       </div>
     </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div
+      v-if="showDeleteModal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg shadow-xl w-96 max-w-[90vw] mx-4">
+        <!-- Header -->
+        <div class="p-6 border-b border-gray-200">
+          <div class="flex items-center">
+            <div
+              class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4"
+            >
+              <svg
+                class="w-6 h-6 text-red-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-gray-800">Delete User</h3>
+              <p class="text-sm text-gray-600">This action cannot be undone</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6">
+          <p class="text-gray-700 mb-4">
+            Are you sure you want to delete
+            <span class="font-semibold"
+              >{{ selectedUser?.firstName }} {{ selectedUser?.lastName }}</span
+            >? This will permanently remove the user from the system.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="p-6 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
+          <button
+            @click="cancelDelete"
+            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            @click="confirmDelete"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+                clip-rule="evenodd"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            Delete User
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -193,6 +266,7 @@ const emit = defineEmits(["updateUser", "deleteUser"]);
 
 // State
 const isEditing = ref(false);
+const showDeleteModal = ref(false);
 const form = ref({
   firstName: "",
   lastName: "",
@@ -230,14 +304,19 @@ const saveUser = () => {
   isEditing.value = false;
 };
 
-// delete user with confirmation
+// show delete confirmation modal
 const deleteUser = () => {
-  if (
-    confirm(
-      `Are you sure you want to delete ${props.selectedUser.firstName} ${props.selectedUser.lastName}? This action cannot be undone.`
-    )
-  ) {
-    emit("deleteUser", props.selectedUser.id);
-  }
+  showDeleteModal.value = true;
+};
+
+// confirm delete user
+const confirmDelete = () => {
+  emit("deleteUser", props.selectedUser.id);
+  showDeleteModal.value = false;
+};
+
+// cancel delete
+const cancelDelete = () => {
+  showDeleteModal.value = false;
 };
 </script>
