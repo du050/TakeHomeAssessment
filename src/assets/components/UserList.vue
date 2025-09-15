@@ -4,7 +4,11 @@
     <div class="bg-blue-600 text-white p-4 rounded-t-lg">
       <div class="flex items-center">
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path>
+          <path
+            fill-rule="evenodd"
+            d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+            clip-rule="evenodd"
+          ></path>
         </svg>
         <span class="font-medium">Filter Users</span>
       </div>
@@ -18,9 +22,9 @@
         @click="selectUser(user)"
         :class="[
           'p-4 cursor-pointer transition-colors',
-          selectedUser?.id === user.id 
-            ? 'bg-blue-50 text-blue-600' 
-            : 'hover:bg-gray-50 text-gray-800'
+          selectedUser?.id === user.id
+            ? 'bg-blue-50 text-blue-600'
+            : 'hover:bg-gray-50 text-gray-800',
         ]"
       >
         <div class="flex items-center">
@@ -33,12 +37,16 @@
 
     <!-- Create New User Button -->
     <div class="bg-gray-100 p-4 rounded-b-lg">
-      <button 
+      <button
         @click="openModal"
         class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
       >
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+          <path
+            fill-rule="evenodd"
+            d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+            clip-rule="evenodd"
+          ></path>
         </svg>
         Create New User
       </button>
