@@ -82,6 +82,45 @@
         </div>
       </div>
 
+      <!-- Error State -->
+      <div
+        v-else-if="store.error"
+        class="p-4 mx-4 my-4 rounded border border-red-200 bg-red-50 text-red-700"
+      >
+        <div class="flex items-start justify-between">
+          <div class="flex items-start">
+            <svg
+              class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+              />
+            </svg>
+            <span class="text-sm">{{ store.error }}</span>
+          </div>
+          <div class="flex gap-2">
+            <button
+              @click="retryFetch"
+              class="px-2 py-1 rounded text-xs bg-red-600 text-white hover:bg-red-700"
+            >
+              Retry
+            </button>
+            <button
+              @click="store.clearError()"
+              class="px-2 py-1 rounded text-xs bg-white border border-red-300 text-red-700 hover:bg-red-100"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Empty State -->
       <div
         v-else-if="store.filteredUsers.length === 0"
@@ -189,5 +228,14 @@ const selectUser = (user) => {
 // emits to parent to open the "New User" modal
 const openModal = () => {
   emit("openModal");
+};
+
+// Retry fetch users
+const retryFetch = async () => {
+  try {
+    await store.fetchUsers();
+  } catch (_) {
+    // Error already handled/set in store
+  }
 };
 </script>

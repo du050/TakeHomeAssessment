@@ -1,5 +1,48 @@
 <template>
   <div class="min-h-screen bg-gray-800">
+    <!-- Global Error Banner -->
+    <div v-if="userStore.error" class="bg-red-600 text-white">
+      <div class="max-w-7xl mx-auto px-4 py-3 flex items-start justify-between">
+        <div class="flex items-start">
+          <svg
+            class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+            />
+          </svg>
+          <p class="text-sm">
+            {{ userStore.error }}
+          </p>
+        </div>
+        <button
+          @click="userStore.clearError()"
+          class="ml-4 text-white/90 hover:text-white"
+          aria-label="Dismiss error"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
+
     <div class="flex h-screen">
       <UserList
         :users="userStore.filteredUsers"
