@@ -2,22 +2,49 @@
   <div class="w-80 bg-white shadow-lg flex flex-col h-full">
     <!-- Filter Header -->
     <div class="bg-blue-600 text-white p-4 rounded-t-lg">
-      <div class="flex items-center">
-        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-          <path
-            fill-rule="evenodd"
-            d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
-            clip-rule="evenodd"
-          ></path>
-        </svg>
-        <span class="font-medium">Filter Users</span>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <path
+              fill-rule="evenodd"
+              d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+              clip-rule="evenodd"
+            ></path>
+          </svg>
+          <span class="font-medium">Filter Users</span>
+        </div>
+        <button
+          @click="toggleFilters"
+          class="text-white/90 hover:text-white"
+          aria-label="Toggle filters"
+        >
+          <svg
+            :class="[
+              'w-5 h-5 transition-transform',
+              showFilters ? 'rotate-0' : '-rotate-90',
+            ]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
       </div>
     </div>
 
     <!-- User List -->
     <div class="bg-white flex-1 flex flex-col">
       <!-- Inline Filters -->
-      <div class="px-4 pt-3 pb-4 border-b border-gray-100 space-y-2">
+      <div
+        v-show="showFilters"
+        class="px-4 pt-3 pb-4 border-b border-gray-100 space-y-2"
+      >
         <input
           v-model="firstName"
           type="text"
@@ -233,6 +260,7 @@ const store = useUserStore();
 const firstName = ref("");
 const lastName = ref("");
 const plan = ref("");
+const showFilters = ref(true);
 
 const applyFilters = async () => {
   store.setFirstNameFilter(firstName.value);
@@ -251,6 +279,10 @@ const resetFilters = async () => {
   try {
     await store.fetchUsers();
   } catch (_) {}
+};
+
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value;
 };
 
 // emits the selected user to the parent, so parent can display details or update UI
