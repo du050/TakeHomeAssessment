@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 // API Configuration
-const API_BASE_URL = 'https://jsonplaceholder.typicode.com/users'
+const API_BASE_URL = 'https://retoolapi.dev/YYCwBG/users'
 const API_TIMEOUT = 10000 // 10 seconds
 
 // Create axios instance with default config
@@ -69,33 +69,50 @@ apiClient.interceptors.response.use(
 // Transform user data from API to our format
 const transformUser = (apiUser) => ({
   id: apiUser.id,
-  firstName: apiUser.name?.split(' ')[0] || '',
-  lastName: apiUser.name?.split(' ').slice(1).join(' ') || '',
-  email: apiUser.email || '',
-  phone: apiUser.phone || '',
-  company: apiUser.company?.name || 'Unknown',
-  plan: ['Free', 'Basic', 'Pro', 'Enterprise'][Math.floor(Math.random() * 4)],
-  avatar: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${apiUser.id}`
+  firstName: apiUser['First Name'] ?? apiUser.firstName ?? apiUser.first_name ?? '',
+  lastName: apiUser['Last Name'] ?? apiUser.lastName ?? apiUser.last_name ?? '',
+  email: apiUser.email ?? '',
+  phone: apiUser.phone ?? '',
+  company: apiUser.company ?? 'Unknown',
+  plan: apiUser.plan ?? 'Free',
+  avatar: apiUser.avatar ?? `https://api.dicebear.com/7.x/pixel-art/svg?seed=${apiUser.id}`
 })
 
-// Transform user data from our format to API format
+// Transform user data from our format to API format (Title Case fields per spec)
 const transformToApiUser = (user) => ({
-  name: `${user.firstName} ${user.lastName}`.trim(),
+  'First Name': user.firstName,
+  'Last Name': user.lastName,
   email: user.email,
   phone: user.phone,
-  company: {
-    name: user.company
-  }
+  company: user.company,
+  plan: user.plan,
+  avatar: user.avatar
 })
 
 export const apiService = {
   /**
-   * Fetch all users from the API
+   * Fetch users with optional filters and pagination
+   * @param {Object} [options]
+   * @param {number} [options.page] - Page number (1-based)
+   * @param {number} [options.limit] - Page size
+   * @param {string} [options.firstName] - Filter by first name (server-side key: "First Name")
+   * @param {string} [options.lastName] - Filter by last name (server-side key: "Last Name")
+   * @param {string} [options.plan] - Filter by plan
+   * @param {string} [options.q] - Full-text search
    * @returns {Promise<Array>} Array of transformed user objects
    */
-  async getUsers() {
+  async getUsers(options = {}) {
     try {
-      const response = await apiClient.get('/')
+      const params = {}
+      if (options.page) params._page = options.page
+      if (options.limit) params._limit = options.limit
+      if (options.q) params.q = options.q
+      // Retool/json-server supports filtering by field names; their docs show Title Cased with spaces
+      if (options.firstName) params['First Name'] = options.firstName
+      if (options.lastName) params['Last Name'] = options.lastName
+      if (options.plan) params.plan = options.plan
+
+      const response = await apiClient.get('/', { params })
       return response.data.map(transformUser)
     } catch (error) {
       console.error('Failed to fetch users:', error)
@@ -143,7 +160,8 @@ export const apiService = {
   async updateUser(id, userData) {
     try {
       const apiData = transformToApiUser(userData)
-      const response = await apiClient.put(`/${id}`, apiData)
+      // Use PATCH to update only provided fields
+      const response = await apiClient.patch(`/${id}`, apiData)
       return transformUser(response.data)
     } catch (error) {
       console.error(`Failed to update user ${id}:`, error)
@@ -172,6 +190,7 @@ export const apiService = {
    */
   async searchUsers(query) {
     try {
+      // Retool API supports search with q parameter
       const response = await apiClient.get(`/?q=${encodeURIComponent(query)}`)
       return response.data.map(transformUser)
     } catch (error) {

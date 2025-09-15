@@ -109,7 +109,7 @@ The create user modal is used for creating a new user and should include form va
 
 ### Users should be able to:
 - See a modal dialog containing fields for creating a new user
-- See a selector containing a list of Plans to choose from:
+- See a selector containing a list of Plans to choose from:or
   - Free Plan
   - Basic Plan
   - Pro Plan

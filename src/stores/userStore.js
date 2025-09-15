@@ -144,10 +144,13 @@ export const useUserStore = defineStore('user', () => {
     try {
       setLoading(true)
       clearError()
+      clearSuccess()
       const userList = await apiService.getUsers()
+      console.log('Fetched users from API:', userList)
       setUsers(userList)
       return userList
     } catch (error) {
+      console.error('API Error:', error)
       setError(error.message)
       throw error
     } finally {
