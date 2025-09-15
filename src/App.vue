@@ -22,15 +22,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
+import { useUserStore } from "./stores/userStore.js";
 import UserList from "./assets/components/UserList.vue";
 import UserDetail from "./assets/components/UserDetail.vue";
 import UserModal from "./assets/components/UserModal.vue";
 
-// Simple local state for testing
-const users = ref([]);
-const selectedUser = ref(null);
-const isModalOpen = ref(false);
+// Use Pinia store
+const userStore = useUserStore();
+const { users, selectedUser, isModalOpen } = userStore;
 
 // Mock Data for testing
 const mockUsers = [
@@ -68,54 +68,40 @@ const mockUsers = [
 
 // Mount mock users for testing
 onMounted(() => {
-  users.value = mockUsers;
+  userStore.setUsers(mockUsers);
 });
 
-// Handlers
+// Handlers - now using store methods
 const selectUser = (user) => {
-  selectedUser.value = user;
+  userStore.selectUser(user);
   console.log("Selected User:", user);
 };
 
 const updateUser = (userData) => {
-  const index = users.value.findIndex((u) => u.id === selectedUser.value.id);
-  if (index !== -1) {
-    users.value[index] = { ...users.value[index], ...userData };
-    selectedUser.value = users.value[index];
+  const updatedUser = userStore.updateUser(selectedUser.value.id, userData);
+  if (updatedUser) {
+    console.log("Updated User:", updatedUser);
   }
 };
 
 const createUser = (userData) => {
-  const newUser = {
-    ...userData,
-    id: Date.now(),
-    avatar: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userData.firstName.toLowerCase()}`,
-  };
-  users.value.push(newUser);
+  const newUser = userStore.addUser(userData);
   console.log("Created User:", newUser);
 };
 
 const deleteUser = (userId) => {
-  const userIndex = users.value.findIndex((u) => u.id === userId);
-  if (userIndex !== -1) {
-    const deletedUser = users.value[userIndex];
-    users.value.splice(userIndex, 1);
-
-    // Clear selection if the deleted user was selected
-    if (selectedUser.value?.id === userId) {
-      selectedUser.value = null;
-    }
-
+  const deletedUser = userStore.deleteUser(userId);
+  if (deletedUser) {
     console.log("Deleted User:", deletedUser);
   }
 };
 
 const openModal = () => {
-  isModalOpen.value = true;
+  userStore.openModal();
   console.log("Modal Opened!");
 };
 
 const closeModal = () => {
-  isModalOpen.value = false;
+  userStore.closeModal();
 };
 </script>
