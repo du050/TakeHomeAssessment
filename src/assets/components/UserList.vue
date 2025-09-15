@@ -1,59 +1,47 @@
 <template>
-  <div class="w-1/3 bg-white border-r border-gray-200">
-    <!-- Header -->
-    <div class="p-4 border-b">
-      <h2 class="text-xl font-bold text-gray-800">Users</h2>
-      <button
-        @click="openModal"
-        class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+  <div class="w-80 bg-white rounded-t-lg shadow-lg">
+    <!-- Filter Header -->
+    <div class="bg-blue-600 text-white p-4 rounded-t-lg">
+      <div class="flex items-center">
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"></path>
+        </svg>
+        <span class="font-medium">Filter Users</span>
+      </div>
+    </div>
+
+    <!-- User List -->
+    <div class="bg-white">
+      <div
+        v-for="user in filteredUsers"
+        :key="user.id"
+        @click="selectUser(user)"
+        :class="[
+          'p-4 cursor-pointer transition-colors',
+          selectedUser?.id === user.id 
+            ? 'bg-blue-50 text-blue-600' 
+            : 'hover:bg-gray-50 text-gray-800'
+        ]"
       >
-        + New User
-      </button>
-
-      <!-- Search and Filter -->
-      <div class="p-4 border-b">
-        <input
-          v-model="searchTerm"
-          type="text"
-          placeholder="Search users..."
-          class="w-full p-2 border rounded"
-        />
-      </div>
-      <div class="p-4 border-b">
-        <select v-model="planFilter" class="w-full p-2 border rounded">
-          <option value="">All Plans</option>
-          <option value="Free">Free</option>
-          <option value="Basic">Basic</option>
-          <option value="Pro">Pro</option>
-          <option value="Enterprise">Enterprise</option>
-        </select>
-      </div>
-
-      <!-- User List -->
-      <div class="overflow-y-auto" style="height: 400px">
-        <div
-          v-for="user in filteredUsers"
-          :key="user.id"
-          @click="selectUser(user)"
-          :class="[
-            'p-4 border-b cursor-pointer hover:bg-gray-50',
-            selectedUser?.id === user.id ? 'bg-blue-100' : '',
-          ]"
-        >
-          <div class="flex items-center">
-            <img :src="user.avatar" class="w-10 h-10 rounded-full mr-3" />
-            <div>
-              <p class="font-medium">
-                {{ user.firstName }} {{ user.lastName }}
-              </p>
-              <p class="text-sm text-gray-600">{{ user.email }}</p>
-              <span class="text-xs bg-gray-200 px-2 py-1 rounded">{{
-                user.plan
-              }}</span>
-            </div>
+        <div class="flex items-center">
+          <div class="flex-1">
+            <p class="font-medium">{{ user.firstName }} {{ user.lastName }}</p>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- Create New User Button -->
+    <div class="bg-gray-100 p-4 rounded-b-lg">
+      <button 
+        @click="openModal"
+        class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+      >
+        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+        </svg>
+        Create New User
+      </button>
     </div>
   </div>
 </template>

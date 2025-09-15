@@ -1,13 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <!-- Tailwind Test Banner -->
-    <div class="bg-green-500 text-white p-4 text-center">
-      <h1 class="text-2xl font-bold">🎉 Tailwind CSS is Working!</h1>
-      <p class="text-sm">
-        If you can see this green banner, Tailwind is properly configured.
-      </p>
-    </div>
-
+  <div class="min-h-screen bg-gray-800">
     <div class="flex h-screen">
       <UserList
         :users="users"
