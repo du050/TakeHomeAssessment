@@ -140,12 +140,19 @@ export const useUserStore = defineStore('user', () => {
   }
 
   // API Integration Methods
-  const fetchUsers = async () => {
+  const fetchUsers = async (options = {}) => {
     try {
       setLoading(true)
       clearError()
       clearSuccess()
-      const userList = await apiService.getUsers()
+      const userList = await apiService.getUsers({
+        page: options.page,
+        limit: options.limit,
+        q: options.q,
+        firstName: options.firstName ?? filterFirstName.value || undefined,
+        lastName: options.lastName ?? filterLastName.value || undefined,
+        plan: options.plan ?? filterPlan.value || undefined,
+      })
       console.log('Fetched users from API:', userList)
       setUsers(userList)
       return userList

@@ -207,17 +207,23 @@ const firstName = ref("");
 const lastName = ref("");
 const plan = ref("");
 
-const applyFilters = () => {
+const applyFilters = async () => {
   store.setFirstNameFilter(firstName.value);
   store.setLastNameFilter(lastName.value);
   store.setPlanFilter(plan.value);
+  try {
+    await store.fetchUsers();
+  } catch (_) {}
 };
 
-const resetFilters = () => {
+const resetFilters = async () => {
   firstName.value = "";
   lastName.value = "";
   plan.value = "";
   store.resetFilters();
+  try {
+    await store.fetchUsers();
+  } catch (_) {}
 };
 
 // emits the selected user to the parent, so parent can display details or update UI
