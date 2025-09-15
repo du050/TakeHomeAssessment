@@ -16,8 +16,47 @@
 
     <!-- User List -->
     <div class="bg-white">
+      <!-- Inline Filters -->
+      <div class="px-4 pt-3 pb-4 border-b border-gray-100 space-y-2">
+        <input
+          v-model="firstName"
+          type="text"
+          placeholder="First Name"
+          class="w-full px-3 py-2 border border-gray-300 rounded"
+        />
+        <input
+          v-model="lastName"
+          type="text"
+          placeholder="Last Name"
+          class="w-full px-3 py-2 border border-gray-300 rounded"
+        />
+        <select
+          v-model="plan"
+          class="w-full px-3 py-2 border border-gray-300 rounded"
+        >
+          <option value="">All Plans</option>
+          <option value="Free">Free</option>
+          <option value="Basic">Basic</option>
+          <option value="Pro">Pro</option>
+          <option value="Enterprise">Enterprise</option>
+        </select>
+        <div class="flex gap-2">
+          <button
+            @click="applyFilters"
+            class="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-sm"
+          >
+            Filter
+          </button>
+          <button
+            @click="resetFilters"
+            class="flex-1 bg-gray-100 text-gray-700 py-2 rounded hover:bg-gray-200 text-sm"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
       <div
-        v-for="user in filteredUsers"
+        v-for="user in store.filteredUsers"
         :key="user.id"
         @click="selectUser(user)"
         :class="[
@@ -55,34 +94,33 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref } from "vue";
+import { useUserStore } from "../../stores/userStore.js";
 
 // Props and Emits
 const props = defineProps(["users", "selectedUser"]);
 const emit = defineEmits(["selectUser", "openModal"]);
 
-// State
-const searchTerm = ref("");
-const planFilter = ref("");
+// Access store
+const store = useUserStore();
 
-// Computed used to filter users based on search and plan filter and returns the filtered users
-const filteredUsers = computed(() => {
-  let filtered = props.users;
+// Local filter inputs (bound to store on apply)
+const firstName = ref("");
+const lastName = ref("");
+const plan = ref("");
 
-  // Filter users based on search term
-  if (searchTerm.value) {
-    filtered = filtered.filter(
-      (user) =>
-        user.firstName.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(searchTerm.value.toLowerCase())
-    );
-  }
-  // if plan filter is not empty, filter users based on plan
-  if (planFilter.value) {
-    filtered = filtered.filter((user) => user.plan === planFilter.value);
-  }
-  return filtered;
-});
+const applyFilters = () => {
+  store.setFirstNameFilter(firstName.value);
+  store.setLastNameFilter(lastName.value);
+  store.setPlanFilter(plan.value);
+};
+
+const resetFilters = () => {
+  firstName.value = "";
+  lastName.value = "";
+  plan.value = "";
+  store.resetFilters();
+};
 
 // emits the selected user to the parent, so parent can display details or update UI
 const selectUser = (user) => {

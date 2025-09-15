@@ -8,10 +8,31 @@ export const useUserStore = defineStore('user', () => {
   const isModalOpen = ref(false)
   const loading = ref(false)
   const error = ref(null)
+  // Filters
+  const filterFirstName = ref("")
+  const filterLastName = ref("")
+  const filterPlan = ref("")
 
   // Getters - computed properties
   const userCount = computed(() => users.value.length)
   const hasUsers = computed(() => users.value.length > 0)
+  const filteredUsers = computed(() => {
+    let result = users.value
+
+    if (filterFirstName.value) {
+      const term = filterFirstName.value.toLowerCase()
+      result = result.filter(u => (u.firstName || "").toLowerCase().includes(term))
+    }
+    if (filterLastName.value) {
+      const term = filterLastName.value.toLowerCase()
+      result = result.filter(u => (u.lastName || "").toLowerCase().includes(term))
+    }
+    if (filterPlan.value) {
+      result = result.filter(u => u.plan === filterPlan.value)
+    }
+
+    return result
+  })
 
   // Actions - methods that modify state
   const setUsers = (userList) => {
@@ -44,6 +65,22 @@ export const useUserStore = defineStore('user', () => {
 
   const clearError = () => {
     error.value = null
+  }
+
+  // Filter setters
+  const setFirstNameFilter = (value) => {
+    filterFirstName.value = value || ""
+  }
+  const setLastNameFilter = (value) => {
+    filterLastName.value = value || ""
+  }
+  const setPlanFilter = (value) => {
+    filterPlan.value = value || ""
+  }
+  const resetFilters = () => {
+    filterFirstName.value = ""
+    filterLastName.value = ""
+    filterPlan.value = ""
   }
 
   // CRUD Operations
@@ -99,9 +136,13 @@ export const useUserStore = defineStore('user', () => {
     isModalOpen,
     loading,
     error,
+    filterFirstName,
+    filterLastName,
+    filterPlan,
     // Getters
     userCount,
     hasUsers,
+    filteredUsers,
     // Actions
     setUsers,
     selectUser,
@@ -111,6 +152,10 @@ export const useUserStore = defineStore('user', () => {
     setLoading,
     setError,
     clearError,
+    setFirstNameFilter,
+    setLastNameFilter,
+    setPlanFilter,
+    resetFilters,
     // CRUD Operations
     addUser,
     updateUser,
