@@ -96,10 +96,13 @@
               class="flex-1 p-2 border border-gray-300 rounded bg-white"
               :class="{ 'bg-gray-100': !isEditing }"
             >
-              <option value="Free">Free Plan</option>
-              <option value="Basic">Basic Plan</option>
-              <option value="Pro">Pro Plan</option>
-              <option value="Enterprise">Enterprise Plan</option>
+              <option
+                v-for="opt in computedPlanOptions"
+                :key="opt"
+                :value="opt"
+              >
+                {{ opt }}
+              </option>
             </select>
           </div>
 
@@ -107,17 +110,13 @@
             <label class="w-32 text-sm font-medium text-gray-700"
               >* Company:</label
             >
-            <select
+            <input
               v-model="form.company"
-              :disabled="!isEditing"
+              :readonly="!isEditing"
+              type="text"
               class="flex-1 p-2 border border-gray-300 rounded bg-white"
               :class="{ 'bg-gray-100': !isEditing }"
-            >
-              <option value="Apple">Apple</option>
-              <option value="Microsoft">Microsoft</option>
-              <option value="Google">Google</option>
-              <option value="Axiom">Axiom</option>
-            </select>
+            />
           </div>
 
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
@@ -343,7 +342,7 @@
 
 <script setup>
 // watch is used to watch the selectedUser prop and update the form
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 
 // Props and Emits
 const props = defineProps(["selectedUser", "isLoading"]);
@@ -360,6 +359,14 @@ const form = ref({
   company: "",
   plan: "",
 });
+
+// Align plan options with API values we see
+const computedPlanOptions = computed(() => [
+  "Free Plan",
+  "Basic Plan",
+  "Pro Plan",
+  "Enterprise Plan",
+]);
 
 // watch the selectedUser prop and update the form
 watch(

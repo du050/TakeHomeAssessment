@@ -66,24 +66,24 @@ apiClient.interceptors.response.use(
   }
 )
 
-// Transform user data from API to our format
+// Transform user data from API to our app format (snake_case source)
 const transformUser = (apiUser) => ({
   id: apiUser.id,
-  firstName: apiUser['First Name'] ?? apiUser.firstName ?? apiUser.first_name ?? '',
-  lastName: apiUser['Last Name'] ?? apiUser.lastName ?? apiUser.last_name ?? '',
+  firstName: apiUser.first_name ?? apiUser.firstName ?? '',
+  lastName: apiUser.last_name ?? apiUser.lastName ?? '',
   email: apiUser.email ?? '',
-  phone: apiUser.phone ?? '',
+  phone: apiUser.phone_number ?? apiUser.phone ?? '',
   company: apiUser.company ?? 'Unknown',
   plan: apiUser.plan ?? 'Free',
   avatar: apiUser.avatar ?? `https://api.dicebear.com/7.x/pixel-art/svg?seed=${apiUser.id}`
 })
 
-// Transform user data from our format to API format (Title Case fields per spec)
+// Transform app user to API format (snake_case)
 const transformToApiUser = (user) => ({
-  'First Name': user.firstName,
-  'Last Name': user.lastName,
+  first_name: user.firstName,
+  last_name: user.lastName,
   email: user.email,
-  phone: user.phone,
+  phone_number: user.phone,
   company: user.company,
   plan: user.plan,
   avatar: user.avatar
@@ -107,9 +107,9 @@ export const apiService = {
       if (options.page) params._page = options.page
       if (options.limit) params._limit = options.limit
       if (options.q) params.q = options.q
-      // Retool/json-server supports filtering by field names; their docs show Title Cased with spaces
-      if (options.firstName) params['First Name'] = options.firstName
-      if (options.lastName) params['Last Name'] = options.lastName
+      // json-server filter by field names (snake_case per API sample)
+      if (options.firstName) params.first_name = options.firstName
+      if (options.lastName) params.last_name = options.lastName
       if (options.plan) params.plan = options.plan
 
       const response = await apiClient.get('/', { params })

@@ -159,6 +159,9 @@ export const useUserStore = defineStore('user', () => {
       })
       console.log('Fetched users from API:', apiUsers)
       setUsers(apiUsers)
+      if (!selectedUser.value && apiUsers && apiUsers.length) {
+        selectedUser.value = apiUsers[0]
+      }
       total.value = apiTotal
       return apiUsers
     } catch (error) {
