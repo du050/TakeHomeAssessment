@@ -122,38 +122,62 @@
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex justify-end space-x-3">
+      <div class="flex justify-between">
+        <!-- Delete Button (Left) -->
         <button
           v-if="!isEditing"
-          @click="startEdit"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+          @click="deleteUser"
+          class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center"
         >
           <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path
-              d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+              fill-rule="evenodd"
+              d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+              clip-rule="evenodd"
             ></path>
-          </svg>
-          Edit
-        </button>
-        <button
-          v-if="isEditing"
-          @click="saveUser"
-          class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
-        >
-          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path
-              d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"
+              fill-rule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clip-rule="evenodd"
             ></path>
           </svg>
-          Save
+          Delete User
         </button>
-        <button
-          v-if="isEditing"
-          @click="cancelEdit"
-          class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
-        >
-          Cancel
-        </button>
+
+        <!-- Edit/Save/Cancel Buttons (Right) -->
+        <div class="flex space-x-3">
+          <button
+            v-if="!isEditing"
+            @click="startEdit"
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+              ></path>
+            </svg>
+            Edit
+          </button>
+          <button
+            v-if="isEditing"
+            @click="saveUser"
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"
+              ></path>
+            </svg>
+            Save
+          </button>
+          <button
+            v-if="isEditing"
+            @click="cancelEdit"
+            class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -165,7 +189,7 @@ import { ref, watch } from "vue";
 
 // Props and Emits
 const props = defineProps(["selectedUser"]);
-const emit = defineEmits(["updateUser"]);
+const emit = defineEmits(["updateUser", "deleteUser"]);
 
 // State
 const isEditing = ref(false);
@@ -204,5 +228,16 @@ const cancelEdit = () => {
 const saveUser = () => {
   emit("updateUser", form.value);
   isEditing.value = false;
+};
+
+// delete user with confirmation
+const deleteUser = () => {
+  if (
+    confirm(
+      `Are you sure you want to delete ${props.selectedUser.firstName} ${props.selectedUser.lastName}? This action cannot be undone.`
+    )
+  ) {
+    emit("deleteUser", props.selectedUser.id);
+  }
 };
 </script>

@@ -7,7 +7,11 @@
         @select-user="selectUser"
         @open-modal="openModal"
       />
-      <UserDetail :selected-user="selectedUser" @update-user="updateUser" />
+      <UserDetail
+        :selected-user="selectedUser"
+        @update-user="updateUser"
+        @delete-user="deleteUser"
+      />
       <UserModal
         :is-open="isModalOpen"
         @close="closeModal"
@@ -89,6 +93,21 @@ const createUser = (userData) => {
   };
   users.value.push(newUser);
   console.log("Created User:", newUser);
+};
+
+const deleteUser = (userId) => {
+  const userIndex = users.value.findIndex((u) => u.id === userId);
+  if (userIndex !== -1) {
+    const deletedUser = users.value[userIndex];
+    users.value.splice(userIndex, 1);
+
+    // Clear selection if the deleted user was selected
+    if (selectedUser.value?.id === userId) {
+      selectedUser.value = null;
+    }
+
+    console.log("Deleted User:", deletedUser);
+  }
 };
 
 const openModal = () => {
