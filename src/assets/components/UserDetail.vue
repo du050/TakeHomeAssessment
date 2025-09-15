@@ -4,6 +4,33 @@
       <p class="text-xl">Select a user to view details</p>
     </div>
 
+    <!-- Loading State -->
+    <div v-else-if="isLoading" class="text-center py-20">
+      <div class="inline-flex items-center">
+        <svg
+          class="animate-spin -ml-1 mr-3 h-6 w-6 text-blue-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+          ></circle>
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          ></path>
+        </svg>
+        <span class="text-gray-600 text-lg">Loading user details...</span>
+      </div>
+    </div>
+
     <div v-else class="bg-white rounded-lg shadow-lg p-8">
       <!-- User Avatar and Basic Info -->
       <div class="flex items-center mb-8">
@@ -127,7 +154,8 @@
         <button
           v-if="!isEditing"
           @click="deleteUser"
-          class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center"
+          :disabled="isLoading"
+          class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
             <path
@@ -149,7 +177,8 @@
           <button
             v-if="!isEditing"
             @click="startEdit"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+            :disabled="isLoading"
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -161,19 +190,47 @@
           <button
             v-if="isEditing"
             @click="saveUser"
-            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
+            :disabled="isLoading"
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <svg
+              v-if="isLoading"
+              class="animate-spin -ml-1 mr-2 h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <svg
+              v-else
+              class="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"
               ></path>
             </svg>
-            Save
+            {{ isLoading ? "Saving..." : "Save" }}
           </button>
           <button
             v-if="isEditing"
             @click="cancelEdit"
-            class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+            :disabled="isLoading"
+            class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
@@ -228,15 +285,43 @@
         <div class="p-6 bg-gray-50 rounded-b-lg flex justify-end space-x-3">
           <button
             @click="cancelDelete"
-            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            :disabled="isLoading"
+            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             @click="confirmDelete"
-            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center"
+            :disabled="isLoading"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <svg
+              v-if="isLoading"
+              class="animate-spin -ml-1 mr-2 h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
+            </svg>
+            <svg
+              v-else
+              class="w-4 h-4 mr-2"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
               <path
                 fill-rule="evenodd"
                 d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
@@ -248,7 +333,7 @@
                 clip-rule="evenodd"
               ></path>
             </svg>
-            Delete User
+            {{ isLoading ? "Deleting..." : "Delete User" }}
           </button>
         </div>
       </div>
@@ -261,7 +346,7 @@
 import { ref, watch } from "vue";
 
 // Props and Emits
-const props = defineProps(["selectedUser"]);
+const props = defineProps(["selectedUser", "isLoading"]);
 const emit = defineEmits(["updateUser", "deleteUser"]);
 
 // State

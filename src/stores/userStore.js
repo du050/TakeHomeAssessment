@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { apiService } from '../services/apiService.js'
+import { apiService } from '../assets/services/apiService.js'
 
 export const useUserStore = defineStore('user', () => {
   // State - reactive data

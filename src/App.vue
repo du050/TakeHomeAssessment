@@ -2,18 +2,20 @@
   <div class="min-h-screen bg-gray-800">
     <div class="flex h-screen">
       <UserList
-        :users="users"
-        :selected-user="selectedUser"
+        :users="userStore.filteredUsers"
+        :selected-user="userStore.selectedUser"
         @select-user="selectUser"
         @open-modal="openModal"
       />
       <UserDetail
-        :selected-user="selectedUser"
+        :selected-user="userStore.selectedUser"
+        :is-loading="userStore.loading"
         @update-user="updateUser"
         @delete-user="deleteUser"
       />
       <UserModal
-        :is-open="isModalOpen"
+        :is-open="userStore.isModalOpen"
+        :is-loading="userStore.loading"
         @close="closeModal"
         @create-user="createUser"
       />
@@ -30,7 +32,6 @@ import UserModal from "./assets/components/UserModal.vue";
 
 // Use Pinia store
 const userStore = useUserStore();
-const { users, selectedUser, isModalOpen } = userStore;
 
 // Mock Data for testing
 const mockUsers = [
@@ -86,7 +87,7 @@ const selectUser = (user) => {
 const updateUser = async (userData) => {
   try {
     const updatedUser = await userStore.updateUserAPI(
-      selectedUser.value.id,
+      userStore.selectedUser.id,
       userData
     );
     console.log("Updated User:", updatedUser);
