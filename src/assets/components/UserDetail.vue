@@ -7,27 +7,36 @@
     <div v-else class="bg-white rounded-lg shadow-lg p-8">
       <!-- User Avatar and Basic Info -->
       <div class="flex items-center mb-8">
-        <div class="w-24 h-24 bg-blue-100 rounded-lg mr-6 flex items-center justify-center">
-          <img 
-            :src="selectedUser.avatar" 
+        <div
+          class="w-24 h-24 bg-blue-100 rounded-lg mr-6 flex items-center justify-center"
+        >
+          <img
+            :src="selectedUser.avatar"
             class="w-20 h-20 rounded-lg object-cover"
           />
         </div>
         <div>
-          <h3 class="text-2xl font-semibold text-gray-800 mb-1">{{ selectedUser.firstName }} {{ selectedUser.lastName }}</h3>
+          <h3 class="text-2xl font-semibold text-gray-800 mb-1">
+            {{ selectedUser.firstName }} {{ selectedUser.lastName }}
+          </h3>
           <p class="text-gray-600 mb-2">Product Manager</p>
-          <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">{{ selectedUser.plan }}</span>
+          <span
+            class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+            >{{ selectedUser.plan }}</span
+          >
         </div>
       </div>
 
       <!-- User Details Section -->
       <div class="mb-6">
         <h4 class="text-lg font-semibold text-gray-800 mb-4">User Details</h4>
-        
+
         <!-- Form Fields -->
         <div class="space-y-4">
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700">* First Name:</label>
+            <label class="w-32 text-sm font-medium text-gray-700"
+              >* First Name:</label
+            >
             <input
               v-model="form.firstName"
               :readonly="!isEditing"
@@ -38,7 +47,9 @@
           </div>
 
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700">* Last Name:</label>
+            <label class="w-32 text-sm font-medium text-gray-700"
+              >* Last Name:</label
+            >
             <input
               v-model="form.lastName"
               :readonly="!isEditing"
@@ -49,7 +60,9 @@
           </div>
 
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700">* Plan:</label>
+            <label class="w-32 text-sm font-medium text-gray-700"
+              >* Plan:</label
+            >
             <select
               v-model="form.plan"
               :disabled="!isEditing"
@@ -64,7 +77,9 @@
           </div>
 
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700">* Company:</label>
+            <label class="w-32 text-sm font-medium text-gray-700"
+              >* Company:</label
+            >
             <select
               v-model="form.company"
               :disabled="!isEditing"
@@ -79,7 +94,9 @@
           </div>
 
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700">* E-mail:</label>
+            <label class="w-32 text-sm font-medium text-gray-700"
+              >* E-mail:</label
+            >
             <input
               v-model="form.email"
               :readonly="!isEditing"
@@ -90,7 +107,9 @@
           </div>
 
           <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700">* Phone #:</label>
+            <label class="w-32 text-sm font-medium text-gray-700"
+              >* Phone #:</label
+            >
             <input
               v-model="form.phone"
               :readonly="!isEditing"
@@ -110,7 +129,9 @@
           class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
         >
           <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"></path>
+            <path
+              d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+            ></path>
           </svg>
           Edit
         </button>
@@ -120,7 +141,9 @@
           class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center"
         >
           <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"></path>
+            <path
+              d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6a1 1 0 10-2 0v5.586l-1.293-1.293z"
+            ></path>
           </svg>
           Save
         </button>
@@ -137,46 +160,49 @@
 </template>
 
 <script setup>
-
 // watch is used to watch the selectedUser prop and update the form
-import { ref, watch } from 'vue'
+import { ref, watch } from "vue";
 
 // Props and Emits
-const props = defineProps(['selectedUser']);
-const emit = defineEmits(['updateUser']);
+const props = defineProps(["selectedUser"]);
+const emit = defineEmits(["updateUser"]);
 
 // State
 const isEditing = ref(false);
 const form = ref({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    company: '',
-    plan: ''
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  company: "",
+  plan: "",
 });
 
 // watch the selectedUser prop and update the form
-watch(() => props.selectedUser, (newUser) => {
+watch(
+  () => props.selectedUser,
+  (newUser) => {
     if (newUser) {
-        form.value = {...newUser};
-        isEditing.value = false;
+      form.value = { ...newUser };
+      isEditing.value = false;
     }
-}, { immediate: true });
+  },
+  { immediate: true }
+);
 
 // start edit and set isEditing to true
 const startEdit = () => {
-    isEditing.value = true;
+  isEditing.value = true;
 };
 
 // cancel edit and set isEditing to false
 const cancelEdit = () => {
-    isEditing.value = false;
+  isEditing.value = false;
 };
 
 // save user and set isEditing to false
 const saveUser = () => {
-    emit('updateUser', form.value);
-    isEditing.value = false;
+  emit("updateUser", form.value);
+  isEditing.value = false;
 };
 </script>

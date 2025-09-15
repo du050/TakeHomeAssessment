@@ -13,49 +13,6 @@
         @close="closeModal"
         @create-user="createUser"
       />
-
-      <!-- Simple user detail viewer for testing -->
-      <div class="flex-1 p-6">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">Selected User</h2>
-        <div
-          v-if="selectedUser"
-          class="bg-white shadow-lg p-6 rounded-lg border"
-        >
-          <img :src="selectedUser.avatar" class="w-20 h-20 rounded-full mb-3" />
-          <p class="text-lg">
-            <strong>Name:</strong> {{ selectedUser.firstName }}
-            {{ selectedUser.lastName }}
-          </p>
-          <p class="text-gray-600">
-            <strong>Email:</strong> {{ selectedUser.email }}
-          </p>
-          <p class="text-blue-600">
-            <strong>Plan:</strong> {{ selectedUser.plan }}
-          </p>
-        </div>
-        <div v-else class="text-gray-500 text-center py-8">
-          No user selected
-        </div>
-      </div>
-    </div>
-
-    <!-- Very simple modal preview -->
-    <div
-      v-if="isModalOpen"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-    >
-      <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-        <h3 class="text-xl font-bold mb-4 text-gray-800">New User Modal</h3>
-        <p class="text-gray-600 mb-4">
-          This is where you would add a new user form.
-        </p>
-        <button
-          @click="isModalOpen = false"
-          class="w-full bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-        >
-          Close
-        </button>
-      </div>
     </div>
   </div>
 </template>
@@ -75,31 +32,33 @@ const isModalOpen = ref(false);
 const mockUsers = [
   {
     id: 1,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
+    firstName: "Brandon",
+    lastName: "M",
+    email: "brandon.m@example.com",
+    phone: "555-0123",
+    company: "Apple",
     plan: "Free",
+    avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=brandon",
   },
   {
     id: 2,
-    firstName: "Jane",
-    lastName: "Smith",
-    email: "jane.smith@example.com",
-    plan: "Basic",
+    firstName: "Nykole",
+    lastName: "M",
+    email: "nmasters@axiomworx.com",
+    phone: "403-555-5555",
+    company: "Axiom",
+    plan: "Pro",
+    avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=nykole",
   },
   {
     id: 3,
-    firstName: "Jim",
-    lastName: "Beam",
-    email: "jim.beam@example.com",
-    plan: "Pro",
-  },
-  {
-    id: 4,
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    plan: "Free",
+    firstName: "Peter",
+    lastName: "Z",
+    email: "peter.z@example.com",
+    phone: "555-0125",
+    company: "Microsoft",
+    plan: "Basic",
+    avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=peter",
   },
 ];
 
@@ -126,11 +85,7 @@ const createUser = (userData) => {
   const newUser = {
     ...userData,
     id: Date.now(),
-    avatar:
-      "https://ui-avatars.com/api/?name=" +
-      userData.firstName +
-      "+" +
-      userData.lastName,
+    avatar: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userData.firstName.toLowerCase()}`,
   };
   users.value.push(newUser);
   console.log("Created User:", newUser);
