@@ -87,7 +87,7 @@
       </div>
       <div class="flex-1 overflow-y-hidden">
         <!-- Loading State -->
-        <div v-if="store.loading" class="p-8 text-center">
+        <div v-if="isLoading" class="p-8 text-center">
           <div class="inline-flex items-center">
             <svg
               class="animate-spin -ml-1 mr-3 h-5 w-5 text-blue-600"
@@ -115,7 +115,7 @@
 
         <!-- Error State -->
         <div
-          v-else-if="store.error"
+          v-else-if="store.getError()"
           class="p-4 mx-4 my-4 rounded border border-red-200 bg-red-50 text-red-700"
         >
           <div class="flex items-start justify-between">
@@ -133,7 +133,7 @@
                   d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
                 />
               </svg>
-              <span class="text-sm">{{ store.error }}</span>
+              <span class="text-sm">{{ store.getError() }}</span>
             </div>
             <div class="flex gap-2">
               <button
@@ -154,7 +154,7 @@
 
         <!-- Empty State -->
         <div
-          v-else-if="store.filteredUsers.length === 0"
+          v-else-if="filteredUsers.length === 0"
           class="p-8 text-center text-gray-500"
         >
           <svg
@@ -177,7 +177,7 @@
         <!-- User List -->
         <div v-else class="divide-y divide-gray-100">
           <div
-            v-for="user in store.filteredUsers"
+            v-for="user in filteredUsers"
             :key="user.id"
             @click="selectUser(user)"
             @keydown.enter.prevent="selectUser(user)"
@@ -185,7 +185,7 @@
             tabindex="0"
             :class="[
               'p-3 cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-              store.selectedUser?.id === user.id
+              selectedUser?.id === user.id
                 ? 'bg-blue-50 text-blue-700'
                 : 'hover:bg-gray-50 text-gray-800',
             ]"
@@ -216,12 +216,12 @@
         class="p-3 border-t border-gray-100 flex items-center justify-between"
       >
         <div class="text-xs text-gray-500">
-          Page {{ store.page }} of {{ totalPages }} ({{ store.total }} users)
+          Page {{ page }} of {{ totalPages }} ({{ total }} users)
         </div>
         <div class="flex items-center gap-2">
           <button
             @click="prevPage"
-            :disabled="store.page <= 1 || store.loading"
+            :disabled="page <= 1 || isLoading"
             class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             aria-label="Previous page"
           >
@@ -229,7 +229,7 @@
           </button>
           <button
             @click="nextPage"
-            :disabled="store.page >= totalPages || store.loading"
+            :disabled="page >= totalPages || isLoading"
             class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             aria-label="Next page"
           >
@@ -268,6 +268,12 @@ const emit = defineEmits(["selectUser", "openModal"]);
 
 // Access store
 const store = useUserStore();
+const filteredUsers = computed(() => store.getFilteredUsers());
+const selectedUser = computed(() => store.getSelectedUser());
+const isLoading = computed(() => store.isLoadingState());
+const page = computed(() => store.getPagination().page);
+const total = computed(() => store.getPagination().total);
+// limit is internal; use derived totalPages
 
 // Local filter inputs (bound to store on apply)
 const firstName = ref("");
@@ -310,20 +316,17 @@ const retryFetch = async () => {
 };
 
 // Pagination helpers
-const totalPages = computed(() => {
-  const pages = Math.ceil((store.total || 0) / (store.limit || 1));
-  return pages || 1;
-});
+const totalPages = computed(() => store.getPagination().totalPages);
 
 const nextPage = async () => {
-  if (store.page < totalPages.value) {
-    await store.setPage(store.page + 1);
+  if (page.value < totalPages.value) {
+    await store.fetchUsers({ page: page.value + 1 });
   }
 };
 
 const prevPage = async () => {
-  if (store.page > 1) {
-    await store.setPage(store.page - 1);
+  if (page.value > 1) {
+    await store.fetchUsers({ page: page.value - 1 });
   }
 };
 </script>

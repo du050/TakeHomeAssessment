@@ -7,7 +7,7 @@
       class="pointer-events-none fixed inset-0 z-50 flex items-start justify-end p-4"
     >
       <div
-        v-if="userStore.successMessage"
+        v-if="successMessage"
         role="alert"
         aria-live="polite"
         class="pointer-events-auto mt-2 w-full max-w-sm rounded-lg bg-green-50 text-green-800 shadow-lg ring-1 ring-green-600/20"
@@ -31,7 +31,7 @@
           <div class="min-w-0 flex-1">
             <p class="text-sm font-medium truncate">Success</p>
             <p class="text-sm text-green-700 break-words">
-              {{ userStore.successMessage }}
+              {{ successMessage }}
             </p>
           </div>
           <button
@@ -57,7 +57,7 @@
       </div>
     </div>
     <!-- Global Error Banner -->
-    <div v-if="userStore.error" class="bg-red-600 text-white">
+    <div v-if="error" class="bg-red-600 text-white">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-start justify-between">
         <div class="flex items-start">
           <svg
@@ -74,7 +74,7 @@
             />
           </svg>
           <p class="text-sm">
-            {{ userStore.error }}
+            {{ error }}
           </p>
         </div>
         <button
@@ -100,21 +100,16 @@
     </div>
 
     <div class="flex h-[calc(100vh-0px)] overflow-hidden gap-2 px-2 py-2">
-      <UserList
-        :users="userStore.filteredUsers"
-        :selected-user="userStore.selectedUser"
-        @select-user="selectUser"
-        @open-modal="openModal"
-      />
+      <UserList @select-user="selectUser" @open-modal="openModal" />
       <UserDetail
-        :selected-user="userStore.selectedUser"
-        :is-loading="userStore.loading"
+        :selected-user="selectedUser"
+        :is-loading="isLoading"
         @update-user="updateUser"
         @delete-user="deleteUser"
       />
       <UserModal
-        :is-open="userStore.isModalOpen"
-        :is-loading="userStore.loading"
+        :is-open="userStore.getIsModalOpen()"
+        :is-loading="isLoading"
         @close="closeModal"
         @create-user="createUser"
       />
@@ -123,7 +118,7 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
 import { useUserStore } from "./stores/userStore.js";
 import UserList from "./assets/components/UserList.vue";
 import UserDetail from "./assets/components/UserDetail.vue";
@@ -131,6 +126,12 @@ import UserModal from "./assets/components/UserModal.vue";
 
 // Use Pinia store
 const userStore = useUserStore();
+
+// Computed wrappers for function-only store getters
+const successMessage = computed(() => userStore.getSuccessMessage());
+const error = computed(() => userStore.getError());
+const selectedUser = computed(() => userStore.getSelectedUser());
+const isLoading = computed(() => userStore.isLoadingState());
 
 // Mock Data for testing
 const mockUsers = [

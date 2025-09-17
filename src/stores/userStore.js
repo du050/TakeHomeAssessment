@@ -19,9 +19,8 @@ export const useUserStore = defineStore('user', () => {
   const limit = ref(8)
   const total = ref(0)
 
-  // Getters - computed properties
-  const userCount = computed(() => users.value.length)
-  const hasUsers = computed(() => users.value.length > 0)
+  // Internal computed state
+  // good for searching without mutating the original users array
   const filteredUsers = computed(() => {
     let result = users.value
 
@@ -40,7 +39,22 @@ export const useUserStore = defineStore('user', () => {
     return result
   })
 
-  // Actions - methods that modify state
+  // Public getters (functions only)
+  const getSelectedUser = () => selectedUser.value
+  const getIsModalOpen = () => isModalOpen.value
+  const isLoadingState = () => loading.value
+  const getError = () => error.value
+  const getSuccessMessage = () => successMessage.value
+  // filter getters intentionally not exported to avoid external mutation patterns
+  // hide limit; provide total pages helper instead
+  const getFilteredUsers = () => filteredUsers.value
+  const getPagination = () => ({
+    page: page.value,
+    total: total.value,
+    totalPages: Math.ceil((total.value || 0) / (limit.value || 1)) || 1
+  })
+
+  // Actions - methods that modify state (encapsulated)
   const setUsers = (userList) => {
     users.value = userList
   }
@@ -61,23 +75,19 @@ export const useUserStore = defineStore('user', () => {
     isModalOpen.value = false
   }
 
-  const setLoading = (isLoading) => {
-    loading.value = isLoading
-  }
+  // internal setters (not exported)
+  const setLoading = (isLoading) => { loading.value = isLoading }
+  const setError = (errorMessage) => { error.value = errorMessage }
 
-  const setError = (errorMessage) => {
-    error.value = errorMessage
-  }
+  
 
-  const clearError = () => {
+  const setSuccess = (message) => { successMessage.value = message || null }
+
+  
+
+  // Internal helper to reset error/success together
+  const resetStatus = () => {
     error.value = null
-  }
-
-  const setSuccess = (message) => {
-    successMessage.value = message || null
-  }
-
-  const clearSuccess = () => {
     successMessage.value = null
   }
 
@@ -97,59 +107,18 @@ export const useUserStore = defineStore('user', () => {
     filterPlan.value = ""
   }
 
-  // CRUD Operations
-  const addUser = (userData) => {
-    const newUser = {
-      ...userData,
-      id: Date.now(),
-      avatar: `https://api.dicebear.com/7.x/pixel-art/svg?seed=${userData.firstName.toLowerCase()}`,
-    }
-    users.value.push(newUser)
-    return newUser
-  }
-
-  const updateUser = (userId, userData) => {
-    const userIndex = users.value.findIndex(u => u.id === userId)
-    if (userIndex !== -1) {
-      users.value[userIndex] = { ...users.value[userIndex], ...userData }
-      
-      // Update selected user if it's the same user
-      // test
-      if (selectedUser.value?.id === userId) {
-        selectedUser.value = users.value[userIndex]
-      }
-      
-      return users.value[userIndex]
-    }
-    return null
-  }
-
-  const deleteUser = (userId) => {
-    const userIndex = users.value.findIndex(u => u.id === userId)
-    if (userIndex !== -1) {
-      const deletedUser = users.value[userIndex]
-      users.value.splice(userIndex, 1)
-      
-      // Clear selection if the deleted user was selected
-      if (selectedUser.value?.id === userId) {
-        selectedUser.value = null
-      }
-      
-      return deletedUser
-    }
-    return null
-  }
-
-  const getUserById = (userId) => {
-    return users.value.find(u => u.id === userId)
-  }
-
   // API Integration Methods
   const fetchUsers = async (options = {}) => {
     try {
       setLoading(true)
-      clearError()
-      clearSuccess()
+      resetStatus()
+      // Persist incoming pagination options internally
+      if (typeof options.page === 'number') {
+        page.value = options.page
+      }
+      if (typeof options.limit === 'number') {
+        limit.value = options.limit
+      }
       const { users: apiUsers, total: apiTotal } = await apiService.getUsers({
         page: options.page ?? page.value,
         limit: options.limit ?? limit.value,
@@ -174,22 +143,12 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const setPage = async (newPage) => {
-    page.value = newPage
-    await fetchUsers()
-  }
-
-  const setLimit = async (newLimit) => {
-    limit.value = newLimit
-    page.value = 1
-    await fetchUsers()
-  }
+  // (Removed setPage/setLimit from public API; use fetchUsers({ page, limit }) instead)
 
   const createUserAPI = async (userData) => {
     try {
       setLoading(true)
-      clearError()
-      clearSuccess()
+      resetStatus()
       const newUser = await apiService.createUser(userData)
       users.value.push(newUser)
       setSuccess('User created successfully')
@@ -205,8 +164,7 @@ export const useUserStore = defineStore('user', () => {
   const updateUserAPI = async (userId, userData) => {
     try {
       setLoading(true)
-      clearError()
-      clearSuccess()
+      resetStatus()
       const updatedUser = await apiService.updateUser(userId, userData)
       
       // Update local state
@@ -233,8 +191,7 @@ export const useUserStore = defineStore('user', () => {
   const deleteUserAPI = async (userId) => {
     try {
       setLoading(true)
-      clearError()
-      clearSuccess()
+      resetStatus()
       await apiService.deleteUser(userId)
       
       // Update local state
@@ -258,65 +215,32 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const searchUsersAPI = async (query) => {
-    try {
-      setLoading(true)
-      clearError()
-      const searchResults = await apiService.searchUsers(query)
-      return searchResults
-    } catch (error) {
-      setError(error.message)
-      throw error
-    } finally {
-      setLoading(false)
-    }
-  }
+  // (Removed searchUsersAPI; not used externally)
 
   return {
-    // State
-    users,
-    selectedUser,
-    isModalOpen,
-    loading,
-    error,
-    page,
-    limit,
-    total,
-    successMessage,
-    filterFirstName,
-    filterLastName,
-    filterPlan,
-    // Getters
-    userCount,
-    hasUsers,
-    filteredUsers,
+    // Getters (functions only)
+    getSelectedUser,
+    getIsModalOpen,
+    isLoadingState,
+    getError,
+    getSuccessMessage,
+    getFilteredUsers,
+    getPagination,
     // Actions
     setUsers,
     selectUser,
     clearSelection,
     openModal,
     closeModal,
-    setLoading,
-    setError,
     clearError,
-    setSuccess,
     clearSuccess,
-    setPage,
-    setLimit,
     setFirstNameFilter,
     setLastNameFilter,
     setPlanFilter,
     resetFilters,
-    // CRUD Operations
-    addUser,
-    updateUser,
-    deleteUser,
-    getUserById,
-    // API Integration
     fetchUsers,
     createUserAPI,
     updateUserAPI,
-    deleteUserAPI,
-    searchUsersAPI
+    deleteUserAPI
   }
 })
