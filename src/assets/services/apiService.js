@@ -16,7 +16,7 @@ const apiClient = axios.create({
 // Request interceptor for logging
 apiClient.interceptors.request.use(
   (config) => {
-    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`)
+      (`API Request: ${config.method?.toUpperCase()} ${config.url}`)
     return config
   },
   (error) => {
@@ -28,7 +28,7 @@ apiClient.interceptors.request.use(
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => {
-    console.log(`API Response: ${response.status} ${response.config.url}`)
+      (`API Response: ${response.status} ${response.config.url}`)
     return response
   },
   (error) => {

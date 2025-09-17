@@ -158,7 +158,7 @@ export const useUserStore = defineStore('user', () => {
         lastName: (options.lastName ?? filterLastName.value) || undefined,
         plan: (options.plan ?? filterPlan.value) || undefined,
       })
-      console.log('Fetched users from API:', apiUsers)
+        
       setUsers(apiUsers)
       if (!selectedUser.value && apiUsers && apiUsers.length) {
         selectedUser.value = apiUsers[0]

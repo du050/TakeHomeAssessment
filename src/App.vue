@@ -180,7 +180,7 @@ onMounted(async () => {
 // Handlers - now using store methods
 const selectUser = (user) => {
   userStore.selectUser(user);
-  console.log("Selected User:", user);
+  "Selected User:", user;
 };
 
 const updateUser = async (userData) => {
@@ -189,7 +189,7 @@ const updateUser = async (userData) => {
       userStore.selectedUser.id,
       userData
     );
-    console.log("Updated User:", updatedUser);
+    "Updated User:", updatedUser;
   } catch (error) {
     console.error("Failed to update user:", error);
   }
@@ -198,7 +198,7 @@ const updateUser = async (userData) => {
 const createUser = async (userData) => {
   try {
     const newUser = await userStore.createUserAPI(userData);
-    console.log("Created User:", newUser);
+    "Created User:", newUser;
   } catch (error) {
     console.error("Failed to create user:", error);
   }
@@ -207,7 +207,7 @@ const createUser = async (userData) => {
 const deleteUser = async (userId) => {
   try {
     await userStore.deleteUserAPI(userId);
-    console.log("Deleted User:", userId);
+    "Deleted User:", userId;
   } catch (error) {
     console.error("Failed to delete user:", error);
   }
@@ -215,7 +215,7 @@ const deleteUser = async (userId) => {
 
 const openModal = () => {
   userStore.openModal();
-  console.log("Modal Opened!");
+  ("Modal Opened!");
 };
 
 const closeModal = () => {
