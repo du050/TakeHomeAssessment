@@ -39,7 +39,18 @@ export const useUserStore = defineStore('user', () => {
       result = result.filter(u => u.plan === filterPlan.value)
     }
 
-    return result
+    // Sort alphabetically by first name, then last name
+    return result.sort((a, b) => {
+      const firstNameA = (a.firstName || "").toLowerCase()
+      const firstNameB = (b.firstName || "").toLowerCase()
+      const lastNameA = (a.lastName || "").toLowerCase()
+      const lastNameB = (b.lastName || "").toLowerCase()
+      
+      if (firstNameA !== firstNameB) {
+        return firstNameA.localeCompare(firstNameB)
+      }
+      return lastNameA.localeCompare(lastNameB)
+    })
   })
 
   // Public getters (functions only)
@@ -87,7 +98,19 @@ export const useUserStore = defineStore('user', () => {
 
   // Actions - methods that modify state (encapsulated)
   const setUsers = (userList) => {
-    users.value = userList
+    // Sort users alphabetically when setting them
+    const sortedUsers = [...userList].sort((a, b) => {
+      const firstNameA = (a.firstName || "").toLowerCase()
+      const firstNameB = (b.firstName || "").toLowerCase()
+      const lastNameA = (a.lastName || "").toLowerCase()
+      const lastNameB = (b.lastName || "").toLowerCase()
+      
+      if (firstNameA !== firstNameB) {
+        return firstNameA.localeCompare(firstNameB)
+      }
+      return lastNameA.localeCompare(lastNameB)
+    })
+    users.value = sortedUsers
   }
 
   const selectUser = (user) => {
