@@ -11,6 +11,8 @@ export const useUserStore = defineStore('user', () => {
   const loading = ref(false)
   const error = ref(null)
   const successMessage = ref(null)
+  // Plan options state (derived from API data, fallback to constants)
+  const planOptionsState = ref([...PLAN_OPTIONS])
   // Filters
   const filterFirstName = ref("")
   const filterLastName = ref("")
@@ -56,7 +58,32 @@ export const useUserStore = defineStore('user', () => {
   })
 
   // Get plan options for components
-  const getPlanOptions = () => PLAN_OPTIONS
+  const getPlanOptions = () => planOptionsState.value
+
+  // Internal: build plan options from current users (fallback to defaults)
+  const rebuildPlanOptionsFromUsers = () => {
+    try {
+      const uniquePlans = Array.from(
+        new Set((users.value || []).map(u => (u.plan || '').toString()).filter(Boolean))
+      )
+      if (uniquePlans.length === 0) {
+        planOptionsState.value = [...PLAN_OPTIONS]
+        return
+      }
+      // Preserve default order where possible, then append any new ones
+      const defaultOrder = PLAN_OPTIONS.map(p => p.value)
+      const inDefaults = uniquePlans.filter(p => defaultOrder.includes(p))
+      const notInDefaults = uniquePlans.filter(p => !defaultOrder.includes(p))
+      const ordered = [
+        ...defaultOrder.filter(p => inDefaults.includes(p)),
+        ...notInDefaults
+      ]
+      planOptionsState.value = ordered.map(p => ({ value: p, label: p }))
+    } catch {
+      // On any failure, ensure we still have sane options
+      planOptionsState.value = [...PLAN_OPTIONS]
+    }
+  }
 
   // Actions - methods that modify state (encapsulated)
   const setUsers = (userList) => {
@@ -140,6 +167,8 @@ export const useUserStore = defineStore('user', () => {
       })
         
       setUsers(apiUsers)
+      // Derive plan options from fetched data
+      rebuildPlanOptionsFromUsers()
       if (!selectedUser.value && apiUsers && apiUsers.length) {
         selectedUser.value = apiUsers[0]
       }
@@ -164,6 +193,8 @@ export const useUserStore = defineStore('user', () => {
       users.value.push(newUser)
       // Immediately select the newly created user so details pane updates
       selectedUser.value = newUser
+      // Update plan options if a new plan was introduced
+      rebuildPlanOptionsFromUsers()
       setSuccess('User created successfully')
       return newUser
     } catch (error) {
@@ -190,6 +221,8 @@ export const useUserStore = defineStore('user', () => {
       if (selectedUser.value?.id === userId) {
         selectedUser.value = updatedUser
       }
+      // Update plan options in case plan changed to a new value
+      rebuildPlanOptionsFromUsers()
       
       setSuccess('User updated successfully')
       return updatedUser
