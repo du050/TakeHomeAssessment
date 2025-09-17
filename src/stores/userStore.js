@@ -162,6 +162,8 @@ export const useUserStore = defineStore('user', () => {
       resetStatus()
       const newUser = await apiService.createUser(userData)
       users.value.push(newUser)
+      // Immediately select the newly created user so details pane updates
+      selectedUser.value = newUser
       setSuccess('User created successfully')
       return newUser
     } catch (error) {
