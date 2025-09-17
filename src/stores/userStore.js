@@ -212,6 +212,24 @@ export const useUserStore = defineStore('user', () => {
     try {
       setLoading(true)
       resetStatus()
+      
+      // Normalize email for strict compare
+      const normalizedEmail = (userData.email || '').trim().toLowerCase()
+      // Check for duplicate email before creating (both locally and via API)
+      const localExistingUser = users.value.find(u => 
+        (u.email || '').trim().toLowerCase() === normalizedEmail
+      )
+      
+      if (localExistingUser) {
+        throw new Error('That email is already in use. Please use a different email.')
+      }
+      
+      // Also check via API exact-match to catch duplicates not in current page
+      const apiMatches = await apiService.findUsersByEmail(userData.email)
+      if (apiMatches && apiMatches.length > 0) {
+        throw new Error('That email is already in use. Please use a different email.')
+      }
+      
       const newUser = await apiService.createUser(userData)
       users.value.push(newUser)
       // Immediately select the newly created user so details pane updates
@@ -232,6 +250,26 @@ export const useUserStore = defineStore('user', () => {
     try {
       setLoading(true)
       resetStatus()
+      
+      // Check for duplicate email before updating (both locally and via API)
+      if (userData.email) {
+        const normalizedEmail = (userData.email || '').trim().toLowerCase()
+        const localExistingUser = users.value.find(u => 
+          u.id !== userId && (u.email || '').trim().toLowerCase() === normalizedEmail
+        )
+        
+        if (localExistingUser) {
+          throw new Error('That email is already in use. Please use a different email.')
+        }
+        
+        // Also check via API exact-match to catch duplicates not in current page
+        const apiMatches = await apiService.findUsersByEmail(userData.email)
+        const apiExistingUser = (apiMatches || []).find(u => u.id !== userId)
+        if (apiExistingUser) {
+          throw new Error('That email is already in use. Please use a different email.')
+        }
+      }
+      
       const updatedUser = await apiService.updateUser(userId, userData)
       
       // Update local state

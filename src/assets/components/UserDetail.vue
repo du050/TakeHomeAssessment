@@ -142,6 +142,23 @@
             />
           </div>
 
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >* E-mail:</label
+            >
+            <input
+              v-model="form.email"
+              :readonly="!isEditing"
+              type="email"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
+            />
+          </div>
+
           <div class="bg-gray-50 p-3 rounded-lg md:col-span-1">
             <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Phone #:</label

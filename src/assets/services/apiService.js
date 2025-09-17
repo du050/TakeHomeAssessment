@@ -201,5 +201,30 @@ export const apiService = {
       console.error('Failed to search users:', error)
       throw error
     }
+  },
+
+  /**
+   * Find users by exact email match (case-insensitive via client-side filter)
+   * @param {string} email
+   * @returns {Promise<Array>} Users with matching email
+   */
+  async findUsersByEmail(email) {
+    try {
+      if (!email) return []
+      // Try exact field filter first (server-side), then fall back to q search
+      const response = await apiClient.get('/', { params: { email } })
+      let candidates = response.data
+      if (!Array.isArray(candidates) || candidates.length === 0) {
+        const search = await apiClient.get(`/?q=${encodeURIComponent(email)}`)
+        candidates = search.data
+      }
+      const normalized = (email || '').trim().toLowerCase()
+      return candidates
+        .map(transformUser)
+        .filter(u => (u.email || '').trim().toLowerCase() === normalized)
+    } catch (error) {
+      console.error('Failed to find users by email:', error)
+      throw error
+    }
   }
 }
