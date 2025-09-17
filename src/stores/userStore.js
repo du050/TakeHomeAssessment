@@ -114,6 +114,7 @@ export const useUserStore = defineStore('user', () => {
       users.value[userIndex] = { ...users.value[userIndex], ...userData }
       
       // Update selected user if it's the same user
+      // test
       if (selectedUser.value?.id === userId) {
         selectedUser.value = users.value[userIndex]
       }

@@ -39,7 +39,7 @@
     </div>
 
     <!-- User List -->
-    <div class="bg-white flex-1 flex flex-col">
+    <div class="bg-white flex-1 flex flex-col overflow-hidden">
       <!-- Inline Filters -->
       <div
         v-show="showFilters"
@@ -82,7 +82,7 @@
           </button>
         </div>
       </div>
-      <div class="flex-1 overflow-y-auto">
+      <div class="flex-1 overflow-y-hidden">
         <!-- Loading State -->
         <div v-if="store.loading" class="p-8 text-center">
           <div class="inline-flex items-center">
@@ -179,7 +179,7 @@
             @click="selectUser(user)"
             :class="[
               'p-4 cursor-pointer transition-colors',
-              selectedUser?.id === user.id
+              store.selectedUser?.id === user.id
                 ? 'bg-blue-50 text-blue-600'
                 : 'hover:bg-gray-50 text-gray-800',
             ]"
@@ -250,7 +250,7 @@ import { ref, computed } from "vue";
 import { useUserStore } from "../../stores/userStore.js";
 
 // Props and Emits
-const props = defineProps(["users", "selectedUser"]);
+// Props from parent are no longer needed; using store directly for data
 const emit = defineEmits(["selectUser", "openModal"]);
 
 // Access store
@@ -266,9 +266,7 @@ const applyFilters = async () => {
   store.setFirstNameFilter(firstName.value);
   store.setLastNameFilter(lastName.value);
   store.setPlanFilter(plan.value);
-  try {
-    await store.fetchUsers();
-  } catch (_) {}
+  await store.fetchUsers();
 };
 
 const resetFilters = async () => {
@@ -276,9 +274,7 @@ const resetFilters = async () => {
   lastName.value = "";
   plan.value = "";
   store.resetFilters();
-  try {
-    await store.fetchUsers();
-  } catch (_) {}
+  await store.fetchUsers();
 };
 
 const toggleFilters = () => {
@@ -297,11 +293,7 @@ const openModal = () => {
 
 // Retry fetch users
 const retryFetch = async () => {
-  try {
-    await store.fetchUsers();
-  } catch (_) {
-    // Error already handled/set in store
-  }
+  await store.fetchUsers();
 };
 
 // Pagination helpers

@@ -4,7 +4,7 @@
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
   >
     <div
-      class="bg-white rounded-lg shadow-xl w-96 max-h-[90vh] overflow-y-auto"
+      class="bg-white rounded-lg shadow-xl w-[48rem] max-w-[95vw] max-h-[70vh] overflow-y-auto"
     >
       <!-- Header -->
       <div
@@ -38,11 +38,11 @@
 
       <!-- Form -->
       <form @submit.prevent="createUser" class="p-6">
-        <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
           <div
-            class="flex items-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
+            class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
-            <label class="w-32 text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* First Name :</label
             >
             <input
@@ -50,14 +50,14 @@
               type="text"
               required
               placeholder="First Name"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white"
             />
           </div>
 
           <div
-            class="flex items-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
+            class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
-            <label class="w-32 text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Last Name :</label
             >
             <input
@@ -65,20 +65,20 @@
               type="text"
               required
               placeholder="Last Name"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white"
             />
           </div>
 
           <div
-            class="flex items-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
+            class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
-            <label class="w-32 text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Plan :</label
             >
             <select
               v-model="form.plan"
               required
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white"
             >
               <option value="">Select Plan</option>
               <option value="Free">Free Plan</option>
@@ -89,9 +89,9 @@
           </div>
 
           <div
-            class="flex items-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
+            class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
-            <label class="w-32 text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Company :</label
             >
             <input
@@ -99,14 +99,14 @@
               required
               type="text"
               placeholder="e.g., Apple, Microsoft"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white"
             />
           </div>
 
           <div
-            class="flex items-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
+            class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
-            <label class="w-32 text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* E-mail :</label
             >
             <input
@@ -114,21 +114,21 @@
               type="email"
               required
               placeholder="E-mail"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white"
             />
           </div>
 
           <div
-            class="flex items-center bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
+            class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
-            <label class="w-32 text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Phone # :</label
             >
             <input
               v-model="form.phone"
               type="tel"
               placeholder="555-555-5555"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white"
             />
           </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-800">
+  <div class="h-screen overflow-hidden bg-gray-800">
     <!-- Global Success Banner -->
     <div v-if="userStore.successMessage" class="bg-green-600 text-white">
       <div class="max-w-7xl mx-auto px-4 py-3 flex items-start justify-between">
@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <div class="flex">
+    <div class="flex h-[calc(100vh-0px)] overflow-hidden">
       <UserList
         :users="userStore.filteredUsers"
         :selected-user="userStore.selectedUser"
