@@ -86,10 +86,13 @@
               class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <option value="">Select Plan</option>
-              <option value="Free">Free Plan</option>
-              <option value="Basic">Basic Plan</option>
-              <option value="Pro">Pro Plan</option>
-              <option value="Enterprise">Enterprise Plan</option>
+              <option
+                v-for="opt in planOptions"
+                :key="opt.value"
+                :value="opt.value"
+              >
+                {{ opt.label }}
+              </option>
             </select>
           </div>
 
@@ -185,11 +188,16 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
+import { useUserStore } from "../../stores/userStore.js";
 
 // Props and Emits
 const props = defineProps(["isOpen", "isLoading"]);
 const emit = defineEmits(["close", "createUser"]);
+
+// Access store for plan options
+const store = useUserStore();
+const planOptions = computed(() => store.getPlanOptions());
 
 // State
 const form = ref({

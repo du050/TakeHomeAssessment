@@ -65,10 +65,13 @@
           class="w-full px-3 py-2 border border-gray-300 rounded"
         >
           <option value="">All Plans</option>
-          <option value="Free">Free</option>
-          <option value="Basic">Basic</option>
-          <option value="Pro">Pro</option>
-          <option value="Enterprise">Enterprise</option>
+          <option
+            v-for="opt in planOptions"
+            :key="opt.value"
+            :value="opt.value"
+          >
+            {{ opt.label }}
+          </option>
         </select>
         <div class="flex gap-2">
           <button
@@ -273,6 +276,7 @@ const selectedUser = computed(() => store.getSelectedUser());
 const isLoading = computed(() => store.isLoadingState());
 const page = computed(() => store.getPagination().page);
 const total = computed(() => store.getPagination().total);
+const planOptions = computed(() => store.getPlanOptions());
 // limit is internal; use derived totalPages
 
 // Local filter inputs (bound to store on apply)

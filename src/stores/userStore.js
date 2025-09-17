@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { apiService } from '../assets/services/apiService.js'
+import { PLAN_OPTIONS } from '../constants/formOptions.js'
 
 export const useUserStore = defineStore('user', () => {
   // State - reactive data
@@ -54,6 +55,9 @@ export const useUserStore = defineStore('user', () => {
     totalPages: Math.ceil((total.value || 0) / (limit.value || 1)) || 1
   })
 
+  // Get plan options for components
+  const getPlanOptions = () => PLAN_OPTIONS
+
   // Actions - methods that modify state (encapsulated)
   const setUsers = (userList) => {
     users.value = userList
@@ -99,6 +103,13 @@ export const useUserStore = defineStore('user', () => {
     filterLastName.value = value || ""
   }
   const setPlanFilter = (value) => {
+    // Validate against PLAN_OPTIONS
+    const validPlans = PLAN_OPTIONS.map(p => p.value)
+    if (value && !validPlans.includes(value)) {
+      console.warn(`Invalid plan filter: ${value}. Valid options: ${validPlans.join(', ')}`)
+      filterPlan.value = ""
+      return
+    }
     filterPlan.value = value || ""
   }
   const resetFilters = () => {
@@ -226,14 +237,13 @@ export const useUserStore = defineStore('user', () => {
     getSuccessMessage,
     getFilteredUsers,
     getPagination,
+    getPlanOptions,
     // Actions
     setUsers,
     selectUser,
     clearSelection,
     openModal,
     closeModal,
-    clearError,
-    clearSuccess,
     setFirstNameFilter,
     setLastNameFilter,
     setPlanFilter,

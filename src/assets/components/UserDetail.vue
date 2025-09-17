@@ -116,11 +116,11 @@
               ]"
             >
               <option
-                v-for="opt in computedPlanOptions"
-                :key="opt"
-                :value="opt"
+                v-for="opt in planOptions"
+                :key="opt.value"
+                :value="opt.value"
               >
-                {{ opt }}
+                {{ opt.label }}
               </option>
             </select>
           </div>
@@ -313,14 +313,14 @@
           <button
             @click="cancelDelete"
             :disabled="isLoading"
-            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            class="px-4 py-2 text-gray-700 bg_WHITE border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2 focus-visible:ring-offset_WHITE"
           >
             Cancel
           </button>
           <button
             @click="confirmDelete"
             :disabled="isLoading"
-            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset_WHITE"
           >
             <svg
               v-if="isLoading"
@@ -371,10 +371,15 @@
 <script setup>
 // watch is used to watch the selectedUser prop and update the form
 import { ref, watch, computed } from "vue";
+import { useUserStore } from "../../stores/userStore.js";
 
 // Props and Emits
 const props = defineProps(["selectedUser", "isLoading"]);
 const emit = defineEmits(["updateUser", "deleteUser"]);
+
+// Access store for plan options
+const store = useUserStore();
+const planOptions = computed(() => store.getPlanOptions());
 
 // State
 const isEditing = ref(false);
@@ -387,14 +392,6 @@ const form = ref({
   company: "",
   plan: "",
 });
-
-// Align plan options with API values we see
-const computedPlanOptions = computed(() => [
-  "Free Plan",
-  "Basic Plan",
-  "Pro Plan",
-  "Enterprise Plan",
-]);
 
 // watch the selectedUser prop and update the form
 watch(
