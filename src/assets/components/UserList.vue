@@ -1,7 +1,9 @@
 <template>
-  <div class="w-80 bg-white shadow-lg flex flex-col h-full">
+  <div
+    class="w-full md:w-80 bg-white shadow-lg flex flex-col h-full rounded-lg border border-gray-200"
+  >
     <!-- Filter Header -->
-    <div class="bg-blue-600 text-white p-4 rounded-t-lg">
+    <div class="bg-blue-600 text-white p-4 rounded-t-lg sticky top-0 z-10">
       <div class="flex items-center justify-between">
         <div class="flex items-center">
           <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -15,8 +17,9 @@
         </div>
         <button
           @click="toggleFilters"
-          class="text-white/90 hover:text-white"
+          class="text-white/90 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-blue-600 rounded"
           aria-label="Toggle filters"
+          :aria-expanded="showFilters ? 'true' : 'false'"
         >
           <svg
             :class="[
@@ -39,11 +42,11 @@
     </div>
 
     <!-- User List -->
-    <div class="bg-white flex-1 flex flex-col overflow-hidden">
+    <div class="bg-white flex-1 flex flex-col overflow-hidden px-3 pt-3 pb-2">
       <!-- Inline Filters -->
       <div
         v-show="showFilters"
-        class="px-4 pt-3 pb-4 border-b border-gray-100 space-y-2"
+        class="px-2 pt-2 pb-3 border border-gray-100 rounded-lg bg-gray-50 space-y-2"
       >
         <input
           v-model="firstName"
@@ -172,28 +175,36 @@
         </div>
 
         <!-- User List -->
-        <div v-else>
+        <div v-else class="divide-y divide-gray-100">
           <div
             v-for="user in store.filteredUsers"
             :key="user.id"
             @click="selectUser(user)"
+            @keydown.enter.prevent="selectUser(user)"
+            role="button"
+            tabindex="0"
             :class="[
-              'p-4 cursor-pointer transition-colors',
+              'p-3 cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
               store.selectedUser?.id === user.id
-                ? 'bg-blue-50 text-blue-600'
+                ? 'bg-blue-50 text-blue-700'
                 : 'hover:bg-gray-50 text-gray-800',
             ]"
           >
             <div class="flex items-center">
-              <img :src="user.avatar" class="w-10 h-10 rounded-full mr-3" />
-              <div class="flex-1">
-                <p class="font-medium">
+              <img
+                :src="user.avatar"
+                class="w-10 h-10 rounded-full mr-3 ring-2 ring-white shadow"
+                alt="User avatar"
+              />
+              <div class="flex-1 min-w-0">
+                <p class="font-medium truncate">
                   {{ user.firstName }} {{ user.lastName }}
                 </p>
-                <p class="text-sm text-gray-600">{{ user.email }}</p>
-                <span class="text-xs bg-gray-200 px-2 py-1 rounded">{{
-                  user.plan
-                }}</span>
+                <p class="text-sm text-gray-600 truncate">{{ user.email }}</p>
+                <span
+                  class="inline-block mt-1 text-xs bg-gray-200 px-2 py-0.5 rounded"
+                  >{{ user.plan }}</span
+                >
               </div>
             </div>
           </div>
@@ -211,14 +222,16 @@
           <button
             @click="prevPage"
             :disabled="store.page <= 1 || store.loading"
-            class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            aria-label="Previous page"
           >
-            Prev
+            Previous
           </button>
           <button
             @click="nextPage"
             :disabled="store.page >= totalPages || store.loading"
-            class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-2 py-1 text-sm rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+            aria-label="Next page"
           >
             Next
           </button>
@@ -230,7 +243,7 @@
     <div class="bg-gray-100 p-4">
       <button
         @click="openModal"
-        class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+        class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-100"
       >
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
           <path
@@ -239,7 +252,7 @@
             clip-rule="evenodd"
           ></path>
         </svg>
-        Create New User
+        Create new user
       </button>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-1 bg-gray-100 p-6">
+  <div class="flex-1 bg-gray-100 p-4 sm:p-6">
     <div v-if="!selectedUser" class="text-center text-gray-500 py-20">
       <p class="text-xl">Select a user to view details</p>
     </div>
@@ -31,24 +31,31 @@
       </div>
     </div>
 
-    <div v-else class="bg-white rounded-lg shadow-lg p-8">
+    <div
+      v-else
+      :class="[
+        'rounded-lg p-6 sm:p-8 shadow-lg bg-white',
+        isEditing ? 'border border-blue-200' : '',
+      ]"
+    >
       <!-- User Avatar and Basic Info -->
-      <div class="flex items-center mb-8">
+      <div class="flex items-center mb-6 sm:mb-8">
         <div
-          class="w-24 h-24 bg-blue-100 rounded-lg mr-6 flex items-center justify-center"
+          class="w-20 h-20 sm:w-24 sm:h-24 bg-blue-50 rounded-lg mr-4 sm:mr-6 flex items-center justify-center ring-1 ring-blue-100"
         >
           <img
             :src="selectedUser.avatar"
-            class="w-20 h-20 rounded-lg object-cover"
+            class="w-16 h-16 sm:w-20 sm:h-20 rounded-lg object-cover"
+            alt="User avatar"
           />
         </div>
         <div>
-          <h3 class="text-2xl font-semibold text-gray-800 mb-1">
+          <h3 class="text-xl sm:text-2xl font-semibold text-gray-800 mb-1">
             {{ selectedUser.firstName }} {{ selectedUser.lastName }}
           </h3>
           <p class="text-gray-600 mb-2">Product Manager</p>
           <span
-            class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+            class="bg-blue-100 text-blue-800 px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-medium"
             >{{ selectedUser.plan }}</span
           >
         </div>
@@ -59,42 +66,54 @@
         <h4 class="text-lg font-semibold text-gray-800 mb-4">User Details</h4>
 
         <!-- Form Fields -->
-        <div class="space-y-4">
-          <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700"
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* First Name:</label
             >
             <input
               v-model="form.firstName"
               :readonly="!isEditing"
               type="text"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
-              :class="{ 'bg-gray-100': !isEditing }"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
             />
           </div>
 
-          <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700"
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Last Name:</label
             >
             <input
               v-model="form.lastName"
               :readonly="!isEditing"
               type="text"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
-              :class="{ 'bg-gray-100': !isEditing }"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
             />
           </div>
 
-          <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700"
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Plan:</label
             >
             <select
               v-model="form.plan"
               :disabled="!isEditing"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
-              :class="{ 'bg-gray-100': !isEditing }"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
             >
               <option
                 v-for="opt in computedPlanOptions"
@@ -106,78 +125,67 @@
             </select>
           </div>
 
-          <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700"
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Company:</label
             >
             <input
               v-model="form.company"
               :readonly="!isEditing"
               type="text"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
-              :class="{ 'bg-gray-100': !isEditing }"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
             />
           </div>
 
-          <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700"
+          <div class="bg-gray-50 p-3 rounded-lg">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* E-mail:</label
             >
             <input
               v-model="form.email"
               :readonly="!isEditing"
               type="email"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
-              :class="{ 'bg-gray-100': !isEditing }"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
             />
           </div>
 
-          <div class="flex items-center bg-gray-50 p-4 rounded-lg">
-            <label class="w-32 text-sm font-medium text-gray-700"
+          <div class="bg-gray-50 p-3 rounded-lg md:col-span-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
               >* Phone #:</label
             >
             <input
               v-model="form.phone"
               :readonly="!isEditing"
               type="tel"
-              class="flex-1 p-2 border border-gray-300 rounded bg-white"
-              :class="{ 'bg-gray-100': !isEditing }"
+              class="w-full p-2 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              :class="[
+                isEditing
+                  ? 'border border-gray-300'
+                  : 'border border-transparent bg-gray-100',
+              ]"
             />
           </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
-      <div class="flex justify-between">
-        <!-- Delete Button (Left) -->
-        <button
-          v-if="!isEditing"
-          @click="deleteUser"
-          :disabled="isLoading"
-          class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path
-              fill-rule="evenodd"
-              d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
-              clip-rule="evenodd"
-            ></path>
-            <path
-              fill-rule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clip-rule="evenodd"
-            ></path>
-          </svg>
-          Delete User
-        </button>
-
-        <!-- Edit/Save/Cancel Buttons (Right) -->
-        <div class="flex space-x-3">
+      <div class="flex justify-end">
+        <div class="flex flex-wrap gap-2 sm:gap-3 justify-end">
           <button
             v-if="!isEditing"
             @click="startEdit"
             :disabled="isLoading"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path
@@ -190,7 +198,7 @@
             v-if="isEditing"
             @click="saveUser"
             :disabled="isLoading"
-            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             <svg
               v-if="isLoading"
@@ -229,9 +237,29 @@
             v-if="isEditing"
             @click="cancelEdit"
             :disabled="isLoading"
-            class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             Cancel
+          </button>
+          <button
+            v-if="isEditing"
+            @click="deleteUser"
+            :disabled="isLoading"
+            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+          >
+            <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                fill-rule="evenodd"
+                d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"
+                clip-rule="evenodd"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd"
+              ></path>
+            </svg>
+            Delete
           </button>
         </div>
       </div>
@@ -285,14 +313,14 @@
           <button
             @click="cancelDelete"
             :disabled="isLoading"
-            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-300 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             Cancel
           </button>
           <button
             @click="confirmDelete"
             :disabled="isLoading"
-            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             <svg
               v-if="isLoading"

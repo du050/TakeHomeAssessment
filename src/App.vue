@@ -1,45 +1,59 @@
 <template>
-  <div class="h-screen overflow-hidden bg-gray-800">
-    <!-- Global Success Banner -->
-    <div v-if="userStore.successMessage" class="bg-green-600 text-white">
-      <div class="max-w-7xl mx-auto px-4 py-3 flex items-start justify-between">
-        <div class="flex items-start">
-          <svg
-            class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+  <div
+    class="min-h-screen overflow-hidden bg-gradient-to-b from-gray-50 to-gray-100"
+  >
+    <!-- Global Success Toast -->
+    <div
+      class="pointer-events-none fixed inset-0 z-50 flex items-start justify-end p-4"
+    >
+      <div
+        v-if="userStore.successMessage"
+        role="alert"
+        aria-live="polite"
+        class="pointer-events-auto mt-2 w-full max-w-sm rounded-lg bg-green-50 text-green-800 shadow-lg ring-1 ring-green-600/20"
+      >
+        <div class="flex items-start gap-3 px-4 py-3">
+          <div class="mt-0.5 flex-shrink-0">
+            <svg
+              class="w-5 h-5 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-medium truncate">Success</p>
+            <p class="text-sm text-green-700 break-words">
+              {{ userStore.successMessage }}
+            </p>
+          </div>
+          <button
+            @click="userStore.clearSuccess()"
+            class="ml-2 inline-flex rounded p-1 text-green-700 hover:bg-green-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-green-600 focus-visible:ring-offset-2 focus-visible:ring-offset-green-50"
+            aria-label="Dismiss success"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <p class="text-sm">
-            {{ userStore.successMessage }}
-          </p>
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
         </div>
-        <button
-          @click="userStore.clearSuccess()"
-          class="ml-4 text-white/90 hover:text-white"
-          aria-label="Dismiss success"
-        >
-          <svg
-            class="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
       </div>
     </div>
     <!-- Global Error Banner -->
@@ -85,7 +99,7 @@
       </div>
     </div>
 
-    <div class="flex h-[calc(100vh-0px)] overflow-hidden">
+    <div class="flex h-[calc(100vh-0px)] overflow-hidden gap-2 px-2 py-2">
       <UserList
         :users="userStore.filteredUsers"
         :selected-user="userStore.selectedUser"

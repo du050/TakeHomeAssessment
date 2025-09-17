@@ -2,22 +2,27 @@
   <div
     v-if="isOpen"
     class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="create-user-title"
   >
     <div
-      class="bg-white rounded-lg shadow-xl w-[48rem] max-w-[95vw] max-h-[70vh] overflow-y-auto"
+      class="bg-white rounded-xl shadow-xl w-[48rem] max-w-[95vw] max-h-[80vh] overflow-y-auto"
     >
       <!-- Header -->
       <div
-        class="p-6 border-b border-gray-200 flex justify-between items-start"
+        class="p-6 border-b border-gray-200 flex justify-between items-start sticky top-0 bg-white z-10"
       >
         <div>
-          <h3 class="text-xl font-bold text-gray-800">Creating New User</h3>
+          <h3 id="create-user-title" class="text-xl font-bold text-gray-800">
+            Creating New User
+          </h3>
           <div class="text-gray-500 text-sm mt-1">-</div>
           <h4 class="text-lg font-semibold text-gray-800 mt-2">User Details</h4>
         </div>
         <button
           @click="closeModal"
-          class="text-gray-400 hover:text-gray-600 transition-colors p-1"
+          class="text-gray-400 hover:text-gray-600 transition-colors p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white rounded"
           aria-label="Close modal"
         >
           <svg
@@ -38,7 +43,7 @@
 
       <!-- Form -->
       <form @submit.prevent="createUser" class="p-6">
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div
             class="bg-gray-50 p-4 rounded-lg border border-dashed border-gray-300"
           >
@@ -50,7 +55,7 @@
               type="text"
               required
               placeholder="First Name"
-              class="w-full p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
@@ -65,7 +70,7 @@
               type="text"
               required
               placeholder="Last Name"
-              class="w-full p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
@@ -78,7 +83,7 @@
             <select
               v-model="form.plan"
               required
-              class="w-full p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <option value="">Select Plan</option>
               <option value="Free">Free Plan</option>
@@ -99,7 +104,7 @@
               required
               type="text"
               placeholder="e.g., Apple, Microsoft"
-              class="w-full p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
@@ -114,7 +119,7 @@
               type="email"
               required
               placeholder="E-mail"
-              class="w-full p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
 
@@ -128,7 +133,7 @@
               v-model="form.phone"
               type="tel"
               placeholder="555-555-5555"
-              class="w-full p-2 border border-gray-300 rounded bg-white"
+              class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
           </div>
         </div>
@@ -138,7 +143,7 @@
           <button
             type="submit"
             :disabled="isLoading"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed"
+            class="bg-blue-600 text-white px-6 py-2 rounded-xl hover:bg-blue-700 transition-colors flex items-center disabled:opacity-50 disabled:cursor-not-allowed shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           >
             <svg
               v-if="isLoading"
