@@ -130,8 +130,8 @@ export const useUserStore = defineStore('user', () => {
     filterLastName.value = value || ""
   }
   const setPlanFilter = (value) => {
-    // Validate against PLAN_OPTIONS
-    const validPlans = PLAN_OPTIONS.map(p => p.value)
+    // Validate against current plan options (reactive, includes API-derived values)
+    const validPlans = (planOptionsState.value || []).map(p => p.value)
     if (value && !validPlans.includes(value)) {
       console.warn(`Invalid plan filter: ${value}. Valid options: ${validPlans.join(', ')}`)
       filterPlan.value = ""

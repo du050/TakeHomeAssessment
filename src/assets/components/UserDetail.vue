@@ -378,7 +378,7 @@ const form = ref({
 
 // Display plan label for header badge
 const displayPlan = computed(() => {
-  const value = props.selectedUser?.plan || "";
+  const value = form.value.plan || "";
   const match = planOptions.value.find((p) => p.value === value);
   return match ? match.label : value || "—";
 });
