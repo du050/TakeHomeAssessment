@@ -13,14 +13,12 @@ const apiClient = axios.create({
   }
 })
 
-// Request interceptor for logging
+// Request/response interceptors for centralized error handling (no noisy logs)
 apiClient.interceptors.request.use(
   (config) => {
-      (`API Request: ${config.method?.toUpperCase()} ${config.url}`)
     return config
   },
   (error) => {
-    console.error('API Request Error:', error)
     return Promise.reject(error)
   }
 )
@@ -28,12 +26,9 @@ apiClient.interceptors.request.use(
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => {
-      (`API Response: ${response.status} ${response.config.url}`)
     return response
   },
   (error) => {
-    console.error('API Response Error:', error)
-    
     // Transform axios errors into user-friendly messages
     if (error.code === 'ECONNABORTED') {
       throw new Error('Request timeout. Please check your connection and try again.')
@@ -102,25 +97,20 @@ export const apiService = {
    * @returns {Promise<Array>} Array of transformed user objects
    */
   async getUsers(options = {}) {
-    try {
-      const params = {}
-      if (options.page) params._page = options.page
-      if (options.limit) params._limit = options.limit
-      if (options.q) params.q = options.q
-      // json-server filter by field names (snake_case per API sample)
-      if (options.firstName) params.first_name = options.firstName
-      if (options.lastName) params.last_name = options.lastName
-      if (options.plan) params.plan = options.plan
+    const params = {}
+    if (options.page) params._page = options.page
+    if (options.limit) params._limit = options.limit
+    if (options.q) params.q = options.q
+    // json-server filter by field names (snake_case per API sample)
+    if (options.firstName) params.first_name = options.firstName
+    if (options.lastName) params.last_name = options.lastName
+    if (options.plan) params.plan = options.plan
 
-      const response = await apiClient.get('/', { params })
-      const total = Number(response.headers['x-total-count'] || response.data.length || 0)
-      return {
-        users: response.data.map(transformUser),
-        total
-      }
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
-      throw error
+    const response = await apiClient.get('/', { params })
+    const total = Number(response.headers['x-total-count'] || response.data.length || 0)
+    return {
+      users: response.data.map(transformUser),
+      total
     }
   },
 
@@ -130,13 +120,8 @@ export const apiService = {
    * @returns {Promise<Object>} Transformed user object
    */
   async getUserById(id) {
-    try {
-      const response = await apiClient.get(`/${id}`)
-      return transformUser(response.data)
-    } catch (error) {
-      console.error(`Failed to fetch user ${id}:`, error)
-      throw error
-    }
+    const response = await apiClient.get(`/${id}`)
+    return transformUser(response.data)
   },
 
   /**
@@ -145,14 +130,9 @@ export const apiService = {
    * @returns {Promise<Object>} Created user object
    */
   async createUser(userData) {
-    try {
-      const apiData = transformToApiUser(userData)
-      const response = await apiClient.post('/', apiData)
-      return transformUser(response.data)
-    } catch (error) {
-      console.error('Failed to create user:', error)
-      throw error
-    }
+    const apiData = transformToApiUser(userData)
+    const response = await apiClient.post('/', apiData)
+    return transformUser(response.data)
   },
 
   /**
@@ -162,15 +142,10 @@ export const apiService = {
    * @returns {Promise<Object>} Updated user object
    */
   async updateUser(id, userData) {
-    try {
-      const apiData = transformToApiUser(userData)
-      // Use PATCH to update only provided fields
-      const response = await apiClient.patch(`/${id}`, apiData)
-      return transformUser(response.data)
-    } catch (error) {
-      console.error(`Failed to update user ${id}:`, error)
-      throw error
-    }
+    const apiData = transformToApiUser(userData)
+    // Use PATCH to update only provided fields
+    const response = await apiClient.patch(`/${id}`, apiData)
+    return transformUser(response.data)
   },
 
   /**
@@ -179,12 +154,7 @@ export const apiService = {
    * @returns {Promise<void>}
    */
   async deleteUser(id) {
-    try {
-      await apiClient.delete(`/${id}`)
-    } catch (error) {
-      console.error(`Failed to delete user ${id}:`, error)
-      throw error
-    }
+    await apiClient.delete(`/${id}`)
   },
 
   /**
@@ -193,14 +163,9 @@ export const apiService = {
    * @returns {Promise<Array>} Array of matching users
    */
   async searchUsers(query) {
-    try {
-      // Retool API supports search with q parameter
-      const response = await apiClient.get(`/?q=${encodeURIComponent(query)}`)
-      return response.data.map(transformUser)
-    } catch (error) {
-      console.error('Failed to search users:', error)
-      throw error
-    }
+    // Retool API supports search with q parameter
+    const response = await apiClient.get(`/?q=${encodeURIComponent(query)}`)
+    return response.data.map(transformUser)
   },
 
   /**
@@ -209,22 +174,17 @@ export const apiService = {
    * @returns {Promise<Array>} Users with matching email
    */
   async findUsersByEmail(email) {
-    try {
-      if (!email) return []
-      // Try exact field filter first (server-side), then fall back to q search
-      const response = await apiClient.get('/', { params: { email } })
-      let candidates = response.data
-      if (!Array.isArray(candidates) || candidates.length === 0) {
-        const search = await apiClient.get(`/?q=${encodeURIComponent(email)}`)
-        candidates = search.data
-      }
-      const normalized = (email || '').trim().toLowerCase()
-      return candidates
-        .map(transformUser)
-        .filter(u => (u.email || '').trim().toLowerCase() === normalized)
-    } catch (error) {
-      console.error('Failed to find users by email:', error)
-      throw error
+    if (!email) return []
+    // Try exact field filter first (server-side), then fall back to q search
+    const response = await apiClient.get('/', { params: { email } })
+    let candidates = response.data
+    if (!Array.isArray(candidates) || candidates.length === 0) {
+      const search = await apiClient.get(`/?q=${encodeURIComponent(email)}`)
+      candidates = search.data
     }
+    const normalized = (email || '').trim().toLowerCase()
+    return candidates
+      .map(transformUser)
+      .filter(u => (u.email || '').trim().toLowerCase() === normalized)
   }
 }

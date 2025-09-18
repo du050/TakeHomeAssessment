@@ -206,7 +206,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // (Removed setPage/setLimit from public API; use fetchUsers({ page, limit }) instead)
+  
 
   const createUserAPI = async (userData) => {
     try {
@@ -322,7 +322,7 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  // (Removed searchUsersAPI; not used externally)
+
 
   return {
     // Getters (functions only)

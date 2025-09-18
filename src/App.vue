@@ -133,90 +133,30 @@ const error = computed(() => userStore.getError());
 const selectedUser = computed(() => userStore.getSelectedUser());
 const isLoading = computed(() => userStore.isLoadingState());
 
-// Mock Data for testing
-const mockUsers = [
-  {
-    id: 1,
-    firstName: "Brandon",
-    lastName: "M",
-    email: "brandon.m@example.com",
-    phone: "555-0123",
-    company: "Apple",
-    plan: "Free",
-    avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=brandon",
-  },
-  {
-    id: 2,
-    firstName: "Nykole",
-    lastName: "M",
-    email: "nmasters@axiomworx.com",
-    phone: "403-555-5555",
-    company: "Axiom",
-    plan: "Pro",
-    avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=nykole",
-  },
-  {
-    id: 3,
-    firstName: "Peter",
-    lastName: "Z",
-    email: "peter.z@example.com",
-    phone: "555-0125",
-    company: "Microsoft",
-    plan: "Basic",
-    avatar: "https://api.dicebear.com/7.x/pixel-art/svg?seed=peter",
-  },
-];
-
 // Load users from API on mount
 onMounted(async () => {
-  try {
-    await userStore.fetchUsers();
-  } catch (error) {
-    console.error("Failed to load users:", error);
-    // Fallback to mock data if API fails
-    userStore.setUsers(mockUsers);
-  }
+  await userStore.fetchUsers();
 });
 
 // Handlers - now using store methods
 const selectUser = (user) => {
   userStore.selectUser(user);
-  "Selected User:", user;
 };
 
 const updateUser = async (userData) => {
-  try {
-    const updatedUser = await userStore.updateUserAPI(
-      userStore.selectedUser.id,
-      userData
-    );
-    "Updated User:", updatedUser;
-  } catch (error) {
-    console.error("Failed to update user:", error);
-  }
+  await userStore.updateUserAPI(userStore.selectedUser.id, userData);
 };
 
 const createUser = async (userData) => {
-  try {
-    const newUser = await userStore.createUserAPI(userData);
-    "Created User:", newUser;
-  } catch (error) {
-    console.error("Failed to create user:", error);
-  }
+  await userStore.createUserAPI(userData);
 };
 
 const deleteUser = async (userId) => {
-  try {
-    await userStore.deleteUserAPI(userId);
-    "Deleted User:", userId;
-  } catch (error) {
-    console.error("Failed to delete user:", error);
-  }
+  await userStore.deleteUserAPI(userId);
 };
 
 const openModal = () => {
   userStore.openModal();
-  ("Modal Opened!");
 };
 
 const closeModal = () => {
