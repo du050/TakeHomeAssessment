@@ -1,3 +1,54 @@
+<script setup>
+import { ref, watch, computed } from "vue";
+import { useUserStore } from "../../stores/userStore.js";
+
+// Props and Emits
+const props = defineProps(["isOpen", "isLoading"]);
+const emit = defineEmits(["close", "createUser"]);
+
+// Access store for plan options
+const store = useUserStore();
+const planOptions = computed(() => store.getPlanOptions());
+
+// State
+const form = ref({
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  company: "",
+  plan: "",
+});
+
+const createUser = () => {
+  emit("createUser", { ...form.value });
+  emit("close");
+};
+
+const closeModal = () => {
+  emit("close");
+};
+
+// reset form when modal opens
+watch(
+  () => props.isOpen,
+  (newVal) => {
+    if (newVal) {
+      form.value = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        company: "",
+        plan: "",
+      };
+    }
+  },
+  { immediate: true }
+);
+</script>
+
+
 <template>
   <div
     v-if="isOpen"
@@ -187,52 +238,3 @@
   </div>
 </template>
 
-<script setup>
-import { ref, watch, computed } from "vue";
-import { useUserStore } from "../../stores/userStore.js";
-
-// Props and Emits
-const props = defineProps(["isOpen", "isLoading"]);
-const emit = defineEmits(["close", "createUser"]);
-
-// Access store for plan options
-const store = useUserStore();
-const planOptions = computed(() => store.getPlanOptions());
-
-// State
-const form = ref({
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  company: "",
-  plan: "",
-});
-
-const createUser = () => {
-  emit("createUser", { ...form.value });
-  emit("close");
-};
-
-const closeModal = () => {
-  emit("close");
-};
-
-// reset form when modal opens
-watch(
-  () => props.isOpen,
-  (newVal) => {
-    if (newVal) {
-      form.value = {
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        company: "",
-        plan: "",
-      };
-    }
-  },
-  { immediate: true }
-);
-</script>

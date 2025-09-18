@@ -1,3 +1,81 @@
+<script setup>
+// watch is used to watch the selectedUser prop and update the form
+import { ref, watch, computed } from "vue";
+import { useUserStore } from "../../stores/userStore.js";
+
+// Props and Emits
+const props = defineProps(["selectedUser", "isLoading"]);
+const emit = defineEmits(["updateUser", "deleteUser"]);
+
+// Access store for plan options
+const store = useUserStore();
+const planOptions = computed(() => store.getPlanOptions());
+
+// State
+const isEditing = ref(false);
+const showDeleteModal = ref(false);
+const form = ref({
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  company: "",
+  plan: "",
+});
+
+// Display plan label for header badge
+const displayPlan = computed(() => {
+  const value = form.value.plan || "";
+  const match = planOptions.value.find((p) => p.value === value);
+  return match ? match.label : value || "—";
+});
+
+// watch the selectedUser prop and update the form
+watch(
+  () => props.selectedUser,
+  (newUser) => {
+    if (newUser) {
+      form.value = { ...newUser };
+      isEditing.value = false;
+    }
+  },
+  { immediate: true }
+);
+
+// start edit and set isEditing to true
+const startEdit = () => {
+  isEditing.value = true;
+};
+
+// cancel edit and set isEditing to false
+const cancelEdit = () => {
+  isEditing.value = false;
+};
+
+// save user and set isEditing to false
+const saveUser = () => {
+  emit("updateUser", form.value);
+  isEditing.value = false;
+};
+
+// show delete confirmation modal
+const deleteUser = () => {
+  showDeleteModal.value = true;
+};
+
+// confirm delete user
+const confirmDelete = () => {
+  emit("deleteUser", props.selectedUser.id);
+  showDeleteModal.value = false;
+};
+
+// cancel delete
+const cancelDelete = () => {
+  showDeleteModal.value = false;
+};
+</script>
+
+
 <template>
   <div class="flex-1 bg-gray-100 p-4 sm:p-6">
     <div v-if="!selectedUser" class="text-center text-gray-500 py-20">
@@ -368,79 +446,3 @@
   </div>
 </template>
 
-<script setup>
-// watch is used to watch the selectedUser prop and update the form
-import { ref, watch, computed } from "vue";
-import { useUserStore } from "../../stores/userStore.js";
-
-// Props and Emits
-const props = defineProps(["selectedUser", "isLoading"]);
-const emit = defineEmits(["updateUser", "deleteUser"]);
-
-// Access store for plan options
-const store = useUserStore();
-const planOptions = computed(() => store.getPlanOptions());
-
-// State
-const isEditing = ref(false);
-const showDeleteModal = ref(false);
-const form = ref({
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  company: "",
-  plan: "",
-});
-
-// Display plan label for header badge
-const displayPlan = computed(() => {
-  const value = form.value.plan || "";
-  const match = planOptions.value.find((p) => p.value === value);
-  return match ? match.label : value || "—";
-});
-
-// watch the selectedUser prop and update the form
-watch(
-  () => props.selectedUser,
-  (newUser) => {
-    if (newUser) {
-      form.value = { ...newUser };
-      isEditing.value = false;
-    }
-  },
-  { immediate: true }
-);
-
-// start edit and set isEditing to true
-const startEdit = () => {
-  isEditing.value = true;
-};
-
-// cancel edit and set isEditing to false
-const cancelEdit = () => {
-  isEditing.value = false;
-};
-
-// save user and set isEditing to false
-const saveUser = () => {
-  emit("updateUser", form.value);
-  isEditing.value = false;
-};
-
-// show delete confirmation modal
-const deleteUser = () => {
-  showDeleteModal.value = true;
-};
-
-// confirm delete user
-const confirmDelete = () => {
-  emit("deleteUser", props.selectedUser.id);
-  showDeleteModal.value = false;
-};
-
-// cancel delete
-const cancelDelete = () => {
-  showDeleteModal.value = false;
-};
-</script>

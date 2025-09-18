@@ -1,3 +1,77 @@
+
+<script setup>
+import { ref, computed } from "vue";
+import { useUserStore } from "../../stores/userStore.js";
+
+// Props and Emits
+// Props from parent are no longer needed; using store directly for data
+const emit = defineEmits(["selectUser", "openModal"]);
+
+// Access store
+const store = useUserStore();
+const filteredUsers = computed(() => store.getFilteredUsers());
+const selectedUser = computed(() => store.getSelectedUser());
+const isLoading = computed(() => store.isLoadingState());
+const page = computed(() => store.getPagination().page);
+const total = computed(() => store.getPagination().total);
+const planOptions = computed(() => store.getPlanOptions());
+// limit is internal; use derived totalPages
+
+// Local filter inputs (bound to store on apply)
+const firstName = ref("");
+const lastName = ref("");
+const plan = ref("");
+const showFilters = ref(true);
+
+const applyFilters = async () => {
+  store.setFirstNameFilter(firstName.value);
+  store.setLastNameFilter(lastName.value);
+  store.setPlanFilter(plan.value);
+  await store.fetchUsers();
+};
+
+const resetFilters = async () => {
+  firstName.value = "";
+  lastName.value = "";
+  plan.value = "";
+  store.resetFilters();
+  await store.fetchUsers();
+};
+
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value;
+};
+
+// emits the selected user to the parent, so parent can display details or update UI
+const selectUser = (user) => {
+  emit("selectUser", user);
+};
+
+// emits to parent to open the "New User" modal
+const openModal = () => {
+  emit("openModal");
+};
+
+// Retry fetch users
+const retryFetch = async () => {
+  await store.fetchUsers();
+};
+
+// Pagination helpers
+const totalPages = computed(() => store.getPagination().totalPages);
+
+const nextPage = async () => {
+  if (page.value < totalPages.value) {
+    await store.fetchUsers({ page: page.value + 1 });
+  }
+};
+
+const prevPage = async () => {
+  if (page.value > 1) {
+    await store.fetchUsers({ page: page.value - 1 });
+  }
+};
+</script>
 <template>
   <div
     class="w-full md:w-80 bg-white shadow-lg flex flex-col h-full rounded-lg border border-gray-200"
@@ -261,76 +335,4 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from "vue";
-import { useUserStore } from "../../stores/userStore.js";
 
-// Props and Emits
-// Props from parent are no longer needed; using store directly for data
-const emit = defineEmits(["selectUser", "openModal"]);
-
-// Access store
-const store = useUserStore();
-const filteredUsers = computed(() => store.getFilteredUsers());
-const selectedUser = computed(() => store.getSelectedUser());
-const isLoading = computed(() => store.isLoadingState());
-const page = computed(() => store.getPagination().page);
-const total = computed(() => store.getPagination().total);
-const planOptions = computed(() => store.getPlanOptions());
-// limit is internal; use derived totalPages
-
-// Local filter inputs (bound to store on apply)
-const firstName = ref("");
-const lastName = ref("");
-const plan = ref("");
-const showFilters = ref(true);
-
-const applyFilters = async () => {
-  store.setFirstNameFilter(firstName.value);
-  store.setLastNameFilter(lastName.value);
-  store.setPlanFilter(plan.value);
-  await store.fetchUsers();
-};
-
-const resetFilters = async () => {
-  firstName.value = "";
-  lastName.value = "";
-  plan.value = "";
-  store.resetFilters();
-  await store.fetchUsers();
-};
-
-const toggleFilters = () => {
-  showFilters.value = !showFilters.value;
-};
-
-// emits the selected user to the parent, so parent can display details or update UI
-const selectUser = (user) => {
-  emit("selectUser", user);
-};
-
-// emits to parent to open the "New User" modal
-const openModal = () => {
-  emit("openModal");
-};
-
-// Retry fetch users
-const retryFetch = async () => {
-  await store.fetchUsers();
-};
-
-// Pagination helpers
-const totalPages = computed(() => store.getPagination().totalPages);
-
-const nextPage = async () => {
-  if (page.value < totalPages.value) {
-    await store.fetchUsers({ page: page.value + 1 });
-  }
-};
-
-const prevPage = async () => {
-  if (page.value > 1) {
-    await store.fetchUsers({ page: page.value - 1 });
-  }
-};
-</script>
